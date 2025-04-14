@@ -1,6 +1,6 @@
 import express, { Application } from "express";
 import cors from "cors";
-import userRotes from "./add/modules/user/user.route";
+import router from "./app/routes";
 
 const app: Application = express();
 
@@ -14,6 +14,6 @@ app.get("/", (req, res) => {
   });
 });
 
-app.use("/api/v1/user", userRotes);
+app.use("/api/v1", router);
 
 export default app;

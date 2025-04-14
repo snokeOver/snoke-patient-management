@@ -1,8 +1,7 @@
-import { PrismaClient, UserRole } from "../../../../generated/prisma";
+import { UserRole } from "../../../../generated/prisma";
 
 import bcrypt from "bcrypt";
-
-const prisma = new PrismaClient();
+import { prisma } from "../../../utils/prisma";
 
 const createAdmin = async (data: any) => {
   const hashedPassword: string = await bcrypt.hash(data.password, 12);
@@ -12,15 +11,6 @@ const createAdmin = async (data: any) => {
     password: hashedPassword,
     role: UserRole.ADMIN,
   };
-
-  // Check if the email already exists in the database
-  const existingUser = await prisma.user.findUnique({
-    where: { email: data.admin.email },
-  });
-
-  if (existingUser) {
-    throw new Error("User with this email already exists");
-  }
 
   const result = await prisma.$transaction(async (tx) => {
     const createdUser = await tx.user.create({ data: userData });

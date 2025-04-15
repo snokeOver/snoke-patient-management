@@ -1,9 +1,14 @@
 import { Admin, Prisma, User, UserStatus } from "../../../../generated/prisma";
-import { IMeta } from "../../../types";
-import { paginationHelper } from "../../../utils/paginationHealper";
-import { prisma } from "../../../utils/prisma";
+import { IMeta, IPagination } from "../../types";
+import { paginationHelper } from "../../utils/paginationHealper";
+import { prisma } from "../../utils/prisma";
 import { adminSearchableFields } from "./admin.constant";
-import { IAllAdmin, IDeletedAdmin } from "./admin.interface";
+
+import {
+  IAdminFilteredQuery,
+  IAllAdmin,
+  IDeletedAdmin,
+} from "./admin.interface";
 
 //Update single admin data by id
 const deleteSingleAdmin = async (id: string): Promise<IDeletedAdmin> => {
@@ -77,10 +82,13 @@ const getSingleAdmin = async (id: string): Promise<Admin | null> => {
 };
 
 //Get all admin data
-const getAllAdmin = async (query: any, pagination: any): Promise<IAllAdmin> => {
+const getAllAdmin = async (
+  query: IAdminFilteredQuery,
+  pagination: IPagination
+): Promise<IAllAdmin> => {
   const { page, take, skip, orderBy } = paginationHelper(pagination);
 
-  // console.log("Pagination data:", pagination);
+  // console.log("Pagination data:", query);
   const { searchTerm, ...filterData } = query;
   const searchCondition: Prisma.AdminWhereInput[] = [];
 
@@ -96,7 +104,7 @@ const getAllAdmin = async (query: any, pagination: any): Promise<IAllAdmin> => {
     searchCondition.push({
       AND: Object.keys(filterData).map((key) => ({
         [key]: {
-          equals: filterData[key],
+          equals: (filterData as any)[key],
         },
       })),
     });

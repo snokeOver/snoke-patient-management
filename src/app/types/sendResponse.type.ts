@@ -7,7 +7,6 @@ export interface ISendResponse<T> {
     statusCode: number;
     success: boolean;
     message: string;
-    error?: any;
     data?: T | undefined | null;
     meta?: IMeta;
   };

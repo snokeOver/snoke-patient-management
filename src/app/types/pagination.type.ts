@@ -1,8 +1,8 @@
 export interface IPagination {
   page?: number;
   limit?: number;
-  sortBy?: string;
-  sortOrder?: string;
+  sortBy?: string | undefined;
+  sortOrder?: string | undefined;
 }
 
 export interface IPaginationReturn {

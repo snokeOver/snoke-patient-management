@@ -4,5 +4,6 @@ import { authController } from "./auth.controller";
 const authRoutes = express.Router();
 
 authRoutes.post("/login", authController.loginUser);
+authRoutes.post("/get-access-token", authController.getAccessToken);
 
 export default authRoutes;

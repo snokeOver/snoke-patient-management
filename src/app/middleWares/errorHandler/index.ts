@@ -7,6 +7,7 @@ import { ZodError } from "zod";
 import handleZodError from "./handleZodError";
 import { TErrorSources } from "../../types";
 import AppError from "./appError";
+import handlePrismaError from "./handlePrismaError";
 
 export const globalErrorHandler: ErrorRequestHandler = (
   err,
@@ -27,6 +28,11 @@ export const globalErrorHandler: ErrorRequestHandler = (
 
   if (err instanceof ZodError) {
     const simplifiedError = handleZodError(err);
+    statusCode = simplifiedError?.statusCode;
+    message = simplifiedError?.message;
+    errorSources = simplifiedError?.errorSources;
+  } else if (err?.name === "PrismaClientKnownRequestError") {
+    const simplifiedError = handlePrismaError(err);
     statusCode = simplifiedError?.statusCode;
     message = simplifiedError?.message;
     errorSources = simplifiedError?.errorSources;

@@ -4,6 +4,8 @@ import { sendResponse } from "../../utils/sendResponse";
 import { tryCatchAsync } from "../../utils/tryCatchAsync";
 import { authService } from "./auth.service";
 import httpStatus from "http-status";
+import { Request, Response } from "express";
+import { JwtPayload } from "jsonwebtoken";
 
 //Login user
 const loginUser = tryCatchAsync(async (req, res) => {
@@ -45,7 +47,41 @@ const getAccessToken = tryCatchAsync(async (req, res) => {
   });
 });
 
+//Change password
+const changePassword = tryCatchAsync(
+  async (req: Request & { user?: JwtPayload }, res: Response) => {
+    const result = await authService.changePassword(req.user, req.body);
+
+    sendResponse({
+      res,
+      sendData: {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Password changed successfully",
+        data: result,
+      },
+    });
+  }
+);
+
+//Forger password
+const forgetPassword = tryCatchAsync(async (req, res) => {
+  const result = await authService.forgetPassword(req.body);
+
+  sendResponse({
+    res,
+    sendData: {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Password changed successfully",
+      data: result,
+    },
+  });
+});
+
 export const authController = {
   loginUser,
   getAccessToken,
+  changePassword,
+  forgetPassword,
 };

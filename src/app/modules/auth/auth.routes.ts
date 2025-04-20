@@ -2,10 +2,11 @@ import express from "express";
 import { authController } from "./auth.controller";
 import auth from "../../middleWares/auth";
 import { UserRole } from "../../../../generated/prisma";
+import clientInfoParser from "../../middleWares/clientInfoParser";
 
 const authRoutes = express.Router();
 
-authRoutes.post("/login", authController.loginUser);
+authRoutes.post("/login", clientInfoParser, authController.loginUser);
 authRoutes.post("/get-access-token", authController.getAccessToken);
 
 authRoutes.post(

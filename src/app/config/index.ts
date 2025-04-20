@@ -21,6 +21,9 @@ export default {
     jwt_pass_reset_expires_in: process.env.JWT_PASS_RESET_EXPIRES_IN!,
   },
 
+  sender_email: process.env.SENDER_EMAIL!,
+  sender_app_password: process.env.SENDER_APP_PASS!,
+
   admin_email: process.env.ADMIN_EMAIL,
   admin_password: process.env.ADMIN_PASSWORD,
   admin_profile_photo: process.env.ADMIN_PROFILE_PHOTO,
@@ -28,8 +31,7 @@ export default {
   cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
   cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
-  sender_email: process.env.SENDER_EMAIL,
-  sender_app_password: process.env.SENDER_APP_PASS,
+
   ssl: {
     store_name: process.env.STORE_NAME,
     payment_api: process.env.PAYMENT_API,

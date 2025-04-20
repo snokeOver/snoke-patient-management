@@ -30,7 +30,7 @@ const sendEmail = async (
 
     // Email configuration
     const mailOptions: any = {
-      from: '"NextMart" <support@nextmart.com>',
+      from: '"Snoke Patient Management" <support@nextmart.com>',
       to: email,
       subject,
       html,
@@ -73,7 +73,7 @@ const createEmailContent = async (data: object, templateType: string) => {
   }
 };
 
-export const EmailSender = {
+export const emailSender = {
   sendEmail,
   createEmailContent,
 };

@@ -47,7 +47,7 @@ const auth = (...requiredRoles: UserRole[]) => {
 
         req.user = decoded as JwtPayload;
         next();
-      } catch (error) {
+      } catch (error: any) {
         if (error instanceof TokenExpiredError) {
           return next(
             new AppError(
@@ -56,7 +56,7 @@ const auth = (...requiredRoles: UserRole[]) => {
             )
           );
         }
-        return next(new AppError(httpStatus.UNAUTHORIZED, "Invalid token!"));
+        return next(new AppError(httpStatus.UNAUTHORIZED, error.message));
       }
     }
   );

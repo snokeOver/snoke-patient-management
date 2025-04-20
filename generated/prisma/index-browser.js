@@ -124,7 +124,6 @@ exports.Prisma.UserScalarFieldEnum = {
   role: 'role',
   needPasswordChange: 'needPasswordChange',
   status: 'status',
-  otpToken: 'otpToken',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -136,6 +135,36 @@ exports.Prisma.AdminScalarFieldEnum = {
   email: 'email',
   contactNumber: 'contactNumber',
   isDeleted: 'isDeleted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SecurityDetailsScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  otpToken: 'otpToken',
+  resetAttemptNumber: 'resetAttemptNumber',
+  lastResetAttemptTime: 'lastResetAttemptTime',
+  failedLoginAttemptNumber: 'failedLoginAttemptNumber',
+  lastLoginTime: 'lastLoginTime',
+  blockedUntil: 'blockedUntil',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DeviceScalarFieldEnum = {
+  id: 'id',
+  securityDetailsId: 'securityDetailsId',
+  type: 'type',
+  browser: 'browser',
+  name: 'name',
+  os: 'os',
+  ip: 'ip',
+  userAgent: 'userAgent',
+  location: 'location',
+  isActive: 'isActive',
+  isPreferred: 'isPreferred',
+  isInfected: 'isInfected',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -164,12 +193,22 @@ exports.UserRole = exports.$Enums.UserRole = {
 exports.UserStatus = exports.$Enums.UserStatus = {
   ACTIVE: 'ACTIVE',
   BLOCKED: 'BLOCKED',
+  SUSPENDED: 'SUSPENDED',
   DELETED: 'DELETED'
+};
+
+exports.DeviceType = exports.$Enums.DeviceType = {
+  MOBILE: 'MOBILE',
+  DESKTOP: 'DESKTOP',
+  TABLET: 'TABLET',
+  OTHER: 'OTHER'
 };
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Admin: 'Admin'
+  Admin: 'Admin',
+  SecurityDetails: 'SecurityDetails',
+  Device: 'Device'
 };
 
 /**

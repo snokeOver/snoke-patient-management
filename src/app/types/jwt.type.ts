@@ -10,4 +10,5 @@ export interface IJwtPayload {
 export interface IJwtOtpPayload {
   otp: string;
   email: string;
+  resetAttemptNumber: number;
 }

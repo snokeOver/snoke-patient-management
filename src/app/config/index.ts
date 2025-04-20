@@ -24,6 +24,15 @@ export default {
   sender_email: process.env.SENDER_EMAIL!,
   sender_app_password: process.env.SENDER_APP_PASS!,
 
+  allowed: {
+    reset_attempts: process.env.ALLOWED_RESET_ATTEMPT_NUMBER!,
+    failed_attempts: process.env.ALLOWED_FAILED_ATTEMPT_NUMBER!,
+    suspend_time_failed_attempt:
+      process.env.SUSPEND_MINUTES_FOR_FAILED_ATTEMPT!,
+    suspend_time_failed_reset_attempt:
+      process.env.SUSPEND_MINUTES_FOR_FAILED_RESET_ATTEMPT!,
+  },
+
   admin_email: process.env.ADMIN_EMAIL,
   admin_password: process.env.ADMIN_PASSWORD,
   admin_profile_photo: process.env.ADMIN_PROFILE_PHOTO,

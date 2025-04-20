@@ -157,6 +157,9 @@ const changePassword = async (
   userData: JwtPayload | undefined,
   payload: { oldPassword: string; newPassword: string }
 ) => {
+  const allowedAttempt = Number(config.allowed.failed_attempts);
+  const suspendTIme = Number(config.allowed.suspend_time_failed_attempt);
+
   //destructure data
   const { oldPassword, newPassword } = payload;
 
@@ -171,12 +174,71 @@ const changePassword = async (
       id: userId,
       status: UserStatus.ACTIVE,
     },
+    include: {
+      securityDetails: true,
+    },
   });
 
-  if (!foundUser) throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  if (!foundUser || !foundUser.securityDetails)
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+
+  const {
+    otpToken,
+    suspendUntil,
+    lastResetAttemptTime,
+    failedLoginAttemptNumber,
+  } = foundUser.securityDetails;
+
+  // Check if the user is suspended due to multiple failed attempts for less than 60 minutes
+  if (suspendUntil && new Date(suspendUntil) > new Date()) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "This account is suspended due to multiple failed attempts. Please try again later."
+    );
+  }
+
+  // Increase failed attempt count
+  let newNoOfAttempt = failedLoginAttemptNumber
+    ? failedLoginAttemptNumber + 1
+    : 1;
+
+  // Check if the user is suspended due to multiple failed attempts for more than 60 minutes then reset the attempt count to 1
+  if (suspendUntil && new Date(suspendUntil) < new Date()) {
+    newNoOfAttempt = 1;
+  }
+
+  // If the number of failed attempts exceeds 5, suspend account for 30 minutes
+  if (newNoOfAttempt >= allowedAttempt) {
+    await prisma.securityDetails.update({
+      where: {
+        userId: foundUser.id,
+      },
+      data: {
+        failedLoginAttemptNumber: newNoOfAttempt,
+        suspendUntil: new Date(Date.now() + suspendTIme * 60 * 1000), // suspend for 60 minutes
+      },
+    });
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You have reached the maximum number of failed attempts. Please try again later."
+    );
+  }
 
   if (!(await bcrypt.compare(oldPassword, foundUser.password))) {
-    throw new AppError(httpStatus.UNAUTHORIZED, "Old password is incorrect!");
+    await prisma.securityDetails.update({
+      where: {
+        userId: foundUser.id,
+      },
+      data: {
+        failedLoginAttemptNumber: newNoOfAttempt,
+      },
+    });
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      `Old password is incorrect!, You have ${
+        allowedAttempt - newNoOfAttempt
+      } attempts left`
+    );
   }
 
   //hash new password and update
@@ -185,23 +247,40 @@ const changePassword = async (
     Number(config.jwt.bcrypt_salt_rounds)
   );
 
-  const updatedUser = await prisma.user.update({
-    where: {
-      id: userId,
-    },
-    data: {
-      password: hashedNewPassword,
-      needPasswordChange: false,
-    },
-  });
+  const result = await prisma.$transaction(async (tx) => {
+    const updatedUser = await tx.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        password: hashedNewPassword,
+        needPasswordChange: false,
+      },
+    });
 
-  if (!updatedUser) throw new AppError(httpStatus.NOT_FOUND, "User not found");
+    const updatedSecurityDetails = await tx.securityDetails.update({
+      where: {
+        userId: userId,
+      },
+      data: {
+        otpToken: null,
+        suspendUntil: null,
+        lastResetAttemptTime: new Date(),
+        failedLoginAttemptNumber: 0,
+      },
+    });
+
+    return { updatedUser, updatedSecurityDetails };
+  });
 
   return { message: "Password changed successfully" };
 };
 
 //Forget password
 const forgetPassword = async (payload: { email: string }) => {
+  const allowedAttempt = Number(config.allowed.reset_attempts);
+  const suspendTIme = Number(config.allowed.suspend_time_failed_reset_attempt);
+
   // Check if user exists and password is correct
   const foundUser = await prisma.user.findUnique({
     where: {
@@ -224,7 +303,7 @@ const forgetPassword = async (payload: { email: string }) => {
   if (suspendUntil && new Date(suspendUntil) > new Date()) {
     throw new AppError(
       httpStatus.FORBIDDEN,
-      "User is blocked due to multiple failed attempts. Please try again later."
+      "This account is suspended due to multiple failed attempts. Please try again later."
     );
   }
 
@@ -281,8 +360,8 @@ const forgetPassword = async (payload: { email: string }) => {
     newNoOfAttempt = 1;
   }
 
-  // If the number of attempts exceeds 3, block the user for 30 minutes
-  if (newNoOfAttempt > 3) {
+  // If the number of attempts exceeds allowedAttempt, block the user for 30 minutes
+  if (newNoOfAttempt >= allowedAttempt) {
     await prisma.securityDetails.update({
       where: {
         userId: foundUser.id,
@@ -290,7 +369,7 @@ const forgetPassword = async (payload: { email: string }) => {
       data: {
         otpToken: createdOtpToken,
         resetAttemptNumber: newNoOfAttempt,
-        suspendUntil: new Date(Date.now() + 30 * 60 * 1000), // Block for 30 minutes
+        suspendUntil: new Date(Date.now() + suspendTIme * 60 * 1000), // Block for 30 minutes
       },
     });
     throw new AppError(
@@ -324,7 +403,7 @@ const forgetPassword = async (payload: { email: string }) => {
     },
   });
 
-  const remainAttemptNumber = 3 - newNoOfAttempt;
+  const remainAttemptNumber = allowedAttempt - newNoOfAttempt;
   return {
     message: `OTP has been sent to ${foundUser.email}`,
     attemptLeft: `You have ${remainAttemptNumber} ${

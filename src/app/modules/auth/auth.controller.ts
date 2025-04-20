@@ -73,7 +73,7 @@ const forgetPassword = tryCatchAsync(async (req, res) => {
     sendData: {
       statusCode: httpStatus.OK,
       success: true,
-      message: "Password changed successfully",
+      message: "OTP send successfully",
       data: result,
     },
   });

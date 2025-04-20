@@ -77,7 +77,7 @@ model SecurityDetails {
   lastResetAttemptTime     DateTime  @default(now())
   failedLoginAttemptNumber Int       @default(0)
   lastLoginTime            DateTime  @default(now())
-  blockedUntil             DateTime?
+  suspendUntil             DateTime?
   createdAt                DateTime  @default(now())
   updatedAt                DateTime  @updatedAt
   device                   Device[]
@@ -88,6 +88,7 @@ model SecurityDetails {
 
 model Device {
   id                String @id @default(uuid())
+  machineId         String @default("")
   securityDetailsId String
 
   securityDetails SecurityDetails @relation(fields: [securityDetailsId], references: [id])

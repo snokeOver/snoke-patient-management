@@ -3471,7 +3471,7 @@ export namespace Prisma {
     lastResetAttemptTime: Date | null
     failedLoginAttemptNumber: number | null
     lastLoginTime: Date | null
-    blockedUntil: Date | null
+    suspendUntil: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3484,7 +3484,7 @@ export namespace Prisma {
     lastResetAttemptTime: Date | null
     failedLoginAttemptNumber: number | null
     lastLoginTime: Date | null
-    blockedUntil: Date | null
+    suspendUntil: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3497,7 +3497,7 @@ export namespace Prisma {
     lastResetAttemptTime: number
     failedLoginAttemptNumber: number
     lastLoginTime: number
-    blockedUntil: number
+    suspendUntil: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -3522,7 +3522,7 @@ export namespace Prisma {
     lastResetAttemptTime?: true
     failedLoginAttemptNumber?: true
     lastLoginTime?: true
-    blockedUntil?: true
+    suspendUntil?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -3535,7 +3535,7 @@ export namespace Prisma {
     lastResetAttemptTime?: true
     failedLoginAttemptNumber?: true
     lastLoginTime?: true
-    blockedUntil?: true
+    suspendUntil?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -3548,7 +3548,7 @@ export namespace Prisma {
     lastResetAttemptTime?: true
     failedLoginAttemptNumber?: true
     lastLoginTime?: true
-    blockedUntil?: true
+    suspendUntil?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -3648,7 +3648,7 @@ export namespace Prisma {
     lastResetAttemptTime: Date
     failedLoginAttemptNumber: number
     lastLoginTime: Date
-    blockedUntil: Date | null
+    suspendUntil: Date | null
     createdAt: Date
     updatedAt: Date
     _count: SecurityDetailsCountAggregateOutputType | null
@@ -3680,7 +3680,7 @@ export namespace Prisma {
     lastResetAttemptTime?: boolean
     failedLoginAttemptNumber?: boolean
     lastLoginTime?: boolean
-    blockedUntil?: boolean
+    suspendUntil?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3696,7 +3696,7 @@ export namespace Prisma {
     lastResetAttemptTime?: boolean
     failedLoginAttemptNumber?: boolean
     lastLoginTime?: boolean
-    blockedUntil?: boolean
+    suspendUntil?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3710,7 +3710,7 @@ export namespace Prisma {
     lastResetAttemptTime?: boolean
     failedLoginAttemptNumber?: boolean
     lastLoginTime?: boolean
-    blockedUntil?: boolean
+    suspendUntil?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3724,12 +3724,12 @@ export namespace Prisma {
     lastResetAttemptTime?: boolean
     failedLoginAttemptNumber?: boolean
     lastLoginTime?: boolean
-    blockedUntil?: boolean
+    suspendUntil?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type SecurityDetailsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "otpToken" | "resetAttemptNumber" | "lastResetAttemptTime" | "failedLoginAttemptNumber" | "lastLoginTime" | "blockedUntil" | "createdAt" | "updatedAt", ExtArgs["result"]["securityDetails"]>
+  export type SecurityDetailsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "otpToken" | "resetAttemptNumber" | "lastResetAttemptTime" | "failedLoginAttemptNumber" | "lastLoginTime" | "suspendUntil" | "createdAt" | "updatedAt", ExtArgs["result"]["securityDetails"]>
   export type SecurityDetailsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     device?: boolean | SecurityDetails$deviceArgs<ExtArgs>
@@ -3756,7 +3756,7 @@ export namespace Prisma {
       lastResetAttemptTime: Date
       failedLoginAttemptNumber: number
       lastLoginTime: Date
-      blockedUntil: Date | null
+      suspendUntil: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["securityDetails"]>
@@ -4191,7 +4191,7 @@ export namespace Prisma {
     readonly lastResetAttemptTime: FieldRef<"SecurityDetails", 'DateTime'>
     readonly failedLoginAttemptNumber: FieldRef<"SecurityDetails", 'Int'>
     readonly lastLoginTime: FieldRef<"SecurityDetails", 'DateTime'>
-    readonly blockedUntil: FieldRef<"SecurityDetails", 'DateTime'>
+    readonly suspendUntil: FieldRef<"SecurityDetails", 'DateTime'>
     readonly createdAt: FieldRef<"SecurityDetails", 'DateTime'>
     readonly updatedAt: FieldRef<"SecurityDetails", 'DateTime'>
   }
@@ -4644,6 +4644,7 @@ export namespace Prisma {
 
   export type DeviceMinAggregateOutputType = {
     id: string | null
+    machineId: string | null
     securityDetailsId: string | null
     type: $Enums.DeviceType | null
     browser: string | null
@@ -4661,6 +4662,7 @@ export namespace Prisma {
 
   export type DeviceMaxAggregateOutputType = {
     id: string | null
+    machineId: string | null
     securityDetailsId: string | null
     type: $Enums.DeviceType | null
     browser: string | null
@@ -4678,6 +4680,7 @@ export namespace Prisma {
 
   export type DeviceCountAggregateOutputType = {
     id: number
+    machineId: number
     securityDetailsId: number
     type: number
     browser: number
@@ -4697,6 +4700,7 @@ export namespace Prisma {
 
   export type DeviceMinAggregateInputType = {
     id?: true
+    machineId?: true
     securityDetailsId?: true
     type?: true
     browser?: true
@@ -4714,6 +4718,7 @@ export namespace Prisma {
 
   export type DeviceMaxAggregateInputType = {
     id?: true
+    machineId?: true
     securityDetailsId?: true
     type?: true
     browser?: true
@@ -4731,6 +4736,7 @@ export namespace Prisma {
 
   export type DeviceCountAggregateInputType = {
     id?: true
+    machineId?: true
     securityDetailsId?: true
     type?: true
     browser?: true
@@ -4821,6 +4827,7 @@ export namespace Prisma {
 
   export type DeviceGroupByOutputType = {
     id: string
+    machineId: string
     securityDetailsId: string
     type: $Enums.DeviceType
     browser: string
@@ -4855,6 +4862,7 @@ export namespace Prisma {
 
   export type DeviceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    machineId?: boolean
     securityDetailsId?: boolean
     type?: boolean
     browser?: boolean
@@ -4873,6 +4881,7 @@ export namespace Prisma {
 
   export type DeviceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    machineId?: boolean
     securityDetailsId?: boolean
     type?: boolean
     browser?: boolean
@@ -4891,6 +4900,7 @@ export namespace Prisma {
 
   export type DeviceSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    machineId?: boolean
     securityDetailsId?: boolean
     type?: boolean
     browser?: boolean
@@ -4909,6 +4919,7 @@ export namespace Prisma {
 
   export type DeviceSelectScalar = {
     id?: boolean
+    machineId?: boolean
     securityDetailsId?: boolean
     type?: boolean
     browser?: boolean
@@ -4924,7 +4935,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type DeviceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "securityDetailsId" | "type" | "browser" | "name" | "os" | "ip" | "userAgent" | "location" | "isActive" | "isPreferred" | "isInfected" | "createdAt" | "updatedAt", ExtArgs["result"]["device"]>
+  export type DeviceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "machineId" | "securityDetailsId" | "type" | "browser" | "name" | "os" | "ip" | "userAgent" | "location" | "isActive" | "isPreferred" | "isInfected" | "createdAt" | "updatedAt", ExtArgs["result"]["device"]>
   export type DeviceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     securityDetails?: boolean | SecurityDetailsDefaultArgs<ExtArgs>
   }
@@ -4942,6 +4953,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      machineId: string
       securityDetailsId: string
       type: $Enums.DeviceType
       browser: string
@@ -5380,6 +5392,7 @@ export namespace Prisma {
    */ 
   interface DeviceFieldRefs {
     readonly id: FieldRef<"Device", 'String'>
+    readonly machineId: FieldRef<"Device", 'String'>
     readonly securityDetailsId: FieldRef<"Device", 'String'>
     readonly type: FieldRef<"Device", 'DeviceType'>
     readonly browser: FieldRef<"Device", 'String'>
@@ -5857,7 +5870,7 @@ export namespace Prisma {
     lastResetAttemptTime: 'lastResetAttemptTime',
     failedLoginAttemptNumber: 'failedLoginAttemptNumber',
     lastLoginTime: 'lastLoginTime',
-    blockedUntil: 'blockedUntil',
+    suspendUntil: 'suspendUntil',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -5867,6 +5880,7 @@ export namespace Prisma {
 
   export const DeviceScalarFieldEnum: {
     id: 'id',
+    machineId: 'machineId',
     securityDetailsId: 'securityDetailsId',
     type: 'type',
     browser: 'browser',
@@ -6176,7 +6190,7 @@ export namespace Prisma {
     lastResetAttemptTime?: DateTimeFilter<"SecurityDetails"> | Date | string
     failedLoginAttemptNumber?: IntFilter<"SecurityDetails"> | number
     lastLoginTime?: DateTimeFilter<"SecurityDetails"> | Date | string
-    blockedUntil?: DateTimeNullableFilter<"SecurityDetails"> | Date | string | null
+    suspendUntil?: DateTimeNullableFilter<"SecurityDetails"> | Date | string | null
     createdAt?: DateTimeFilter<"SecurityDetails"> | Date | string
     updatedAt?: DateTimeFilter<"SecurityDetails"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -6191,7 +6205,7 @@ export namespace Prisma {
     lastResetAttemptTime?: SortOrder
     failedLoginAttemptNumber?: SortOrder
     lastLoginTime?: SortOrder
-    blockedUntil?: SortOrderInput | SortOrder
+    suspendUntil?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
@@ -6209,7 +6223,7 @@ export namespace Prisma {
     lastResetAttemptTime?: DateTimeFilter<"SecurityDetails"> | Date | string
     failedLoginAttemptNumber?: IntFilter<"SecurityDetails"> | number
     lastLoginTime?: DateTimeFilter<"SecurityDetails"> | Date | string
-    blockedUntil?: DateTimeNullableFilter<"SecurityDetails"> | Date | string | null
+    suspendUntil?: DateTimeNullableFilter<"SecurityDetails"> | Date | string | null
     createdAt?: DateTimeFilter<"SecurityDetails"> | Date | string
     updatedAt?: DateTimeFilter<"SecurityDetails"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -6224,7 +6238,7 @@ export namespace Prisma {
     lastResetAttemptTime?: SortOrder
     failedLoginAttemptNumber?: SortOrder
     lastLoginTime?: SortOrder
-    blockedUntil?: SortOrderInput | SortOrder
+    suspendUntil?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: SecurityDetailsCountOrderByAggregateInput
@@ -6245,7 +6259,7 @@ export namespace Prisma {
     lastResetAttemptTime?: DateTimeWithAggregatesFilter<"SecurityDetails"> | Date | string
     failedLoginAttemptNumber?: IntWithAggregatesFilter<"SecurityDetails"> | number
     lastLoginTime?: DateTimeWithAggregatesFilter<"SecurityDetails"> | Date | string
-    blockedUntil?: DateTimeNullableWithAggregatesFilter<"SecurityDetails"> | Date | string | null
+    suspendUntil?: DateTimeNullableWithAggregatesFilter<"SecurityDetails"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"SecurityDetails"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"SecurityDetails"> | Date | string
   }
@@ -6255,6 +6269,7 @@ export namespace Prisma {
     OR?: DeviceWhereInput[]
     NOT?: DeviceWhereInput | DeviceWhereInput[]
     id?: StringFilter<"Device"> | string
+    machineId?: StringFilter<"Device"> | string
     securityDetailsId?: StringFilter<"Device"> | string
     type?: EnumDeviceTypeFilter<"Device"> | $Enums.DeviceType
     browser?: StringFilter<"Device"> | string
@@ -6273,6 +6288,7 @@ export namespace Prisma {
 
   export type DeviceOrderByWithRelationInput = {
     id?: SortOrder
+    machineId?: SortOrder
     securityDetailsId?: SortOrder
     type?: SortOrder
     browser?: SortOrder
@@ -6294,6 +6310,7 @@ export namespace Prisma {
     AND?: DeviceWhereInput | DeviceWhereInput[]
     OR?: DeviceWhereInput[]
     NOT?: DeviceWhereInput | DeviceWhereInput[]
+    machineId?: StringFilter<"Device"> | string
     securityDetailsId?: StringFilter<"Device"> | string
     type?: EnumDeviceTypeFilter<"Device"> | $Enums.DeviceType
     browser?: StringFilter<"Device"> | string
@@ -6312,6 +6329,7 @@ export namespace Prisma {
 
   export type DeviceOrderByWithAggregationInput = {
     id?: SortOrder
+    machineId?: SortOrder
     securityDetailsId?: SortOrder
     type?: SortOrder
     browser?: SortOrder
@@ -6335,6 +6353,7 @@ export namespace Prisma {
     OR?: DeviceScalarWhereWithAggregatesInput[]
     NOT?: DeviceScalarWhereWithAggregatesInput | DeviceScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"Device"> | string
+    machineId?: StringWithAggregatesFilter<"Device"> | string
     securityDetailsId?: StringWithAggregatesFilter<"Device"> | string
     type?: EnumDeviceTypeWithAggregatesFilter<"Device"> | $Enums.DeviceType
     browser?: StringWithAggregatesFilter<"Device"> | string
@@ -6518,7 +6537,7 @@ export namespace Prisma {
     lastResetAttemptTime?: Date | string
     failedLoginAttemptNumber?: number
     lastLoginTime?: Date | string
-    blockedUntil?: Date | string | null
+    suspendUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutSecurityDetailsInput
@@ -6533,7 +6552,7 @@ export namespace Prisma {
     lastResetAttemptTime?: Date | string
     failedLoginAttemptNumber?: number
     lastLoginTime?: Date | string
-    blockedUntil?: Date | string | null
+    suspendUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     device?: DeviceUncheckedCreateNestedManyWithoutSecurityDetailsInput
@@ -6546,7 +6565,7 @@ export namespace Prisma {
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastLoginTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    blockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    suspendUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutSecurityDetailsNestedInput
@@ -6561,7 +6580,7 @@ export namespace Prisma {
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastLoginTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    blockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    suspendUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     device?: DeviceUncheckedUpdateManyWithoutSecurityDetailsNestedInput
@@ -6575,7 +6594,7 @@ export namespace Prisma {
     lastResetAttemptTime?: Date | string
     failedLoginAttemptNumber?: number
     lastLoginTime?: Date | string
-    blockedUntil?: Date | string | null
+    suspendUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -6587,7 +6606,7 @@ export namespace Prisma {
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastLoginTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    blockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    suspendUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6600,13 +6619,14 @@ export namespace Prisma {
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastLoginTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    blockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    suspendUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type DeviceCreateInput = {
     id?: string
+    machineId?: string
     type: $Enums.DeviceType
     browser: string
     name: string
@@ -6624,6 +6644,7 @@ export namespace Prisma {
 
   export type DeviceUncheckedCreateInput = {
     id?: string
+    machineId?: string
     securityDetailsId: string
     type: $Enums.DeviceType
     browser: string
@@ -6641,6 +6662,7 @@ export namespace Prisma {
 
   export type DeviceUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    machineId?: StringFieldUpdateOperationsInput | string
     type?: EnumDeviceTypeFieldUpdateOperationsInput | $Enums.DeviceType
     browser?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -6658,6 +6680,7 @@ export namespace Prisma {
 
   export type DeviceUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    machineId?: StringFieldUpdateOperationsInput | string
     securityDetailsId?: StringFieldUpdateOperationsInput | string
     type?: EnumDeviceTypeFieldUpdateOperationsInput | $Enums.DeviceType
     browser?: StringFieldUpdateOperationsInput | string
@@ -6675,6 +6698,7 @@ export namespace Prisma {
 
   export type DeviceCreateManyInput = {
     id?: string
+    machineId?: string
     securityDetailsId: string
     type: $Enums.DeviceType
     browser: string
@@ -6692,6 +6716,7 @@ export namespace Prisma {
 
   export type DeviceUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    machineId?: StringFieldUpdateOperationsInput | string
     type?: EnumDeviceTypeFieldUpdateOperationsInput | $Enums.DeviceType
     browser?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -6708,6 +6733,7 @@ export namespace Prisma {
 
   export type DeviceUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    machineId?: StringFieldUpdateOperationsInput | string
     securityDetailsId?: StringFieldUpdateOperationsInput | string
     type?: EnumDeviceTypeFieldUpdateOperationsInput | $Enums.DeviceType
     browser?: StringFieldUpdateOperationsInput | string
@@ -6987,7 +7013,7 @@ export namespace Prisma {
     lastResetAttemptTime?: SortOrder
     failedLoginAttemptNumber?: SortOrder
     lastLoginTime?: SortOrder
-    blockedUntil?: SortOrder
+    suspendUntil?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -7005,7 +7031,7 @@ export namespace Prisma {
     lastResetAttemptTime?: SortOrder
     failedLoginAttemptNumber?: SortOrder
     lastLoginTime?: SortOrder
-    blockedUntil?: SortOrder
+    suspendUntil?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -7018,7 +7044,7 @@ export namespace Prisma {
     lastResetAttemptTime?: SortOrder
     failedLoginAttemptNumber?: SortOrder
     lastLoginTime?: SortOrder
-    blockedUntil?: SortOrder
+    suspendUntil?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -7072,6 +7098,7 @@ export namespace Prisma {
 
   export type DeviceCountOrderByAggregateInput = {
     id?: SortOrder
+    machineId?: SortOrder
     securityDetailsId?: SortOrder
     type?: SortOrder
     browser?: SortOrder
@@ -7089,6 +7116,7 @@ export namespace Prisma {
 
   export type DeviceMaxOrderByAggregateInput = {
     id?: SortOrder
+    machineId?: SortOrder
     securityDetailsId?: SortOrder
     type?: SortOrder
     browser?: SortOrder
@@ -7106,6 +7134,7 @@ export namespace Prisma {
 
   export type DeviceMinOrderByAggregateInput = {
     id?: SortOrder
+    machineId?: SortOrder
     securityDetailsId?: SortOrder
     type?: SortOrder
     browser?: SortOrder
@@ -7576,7 +7605,7 @@ export namespace Prisma {
     lastResetAttemptTime?: Date | string
     failedLoginAttemptNumber?: number
     lastLoginTime?: Date | string
-    blockedUntil?: Date | string | null
+    suspendUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     device?: DeviceCreateNestedManyWithoutSecurityDetailsInput
@@ -7589,7 +7618,7 @@ export namespace Prisma {
     lastResetAttemptTime?: Date | string
     failedLoginAttemptNumber?: number
     lastLoginTime?: Date | string
-    blockedUntil?: Date | string | null
+    suspendUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     device?: DeviceUncheckedCreateNestedManyWithoutSecurityDetailsInput
@@ -7649,7 +7678,7 @@ export namespace Prisma {
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastLoginTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    blockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    suspendUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     device?: DeviceUpdateManyWithoutSecurityDetailsNestedInput
@@ -7662,7 +7691,7 @@ export namespace Prisma {
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastLoginTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    blockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    suspendUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     device?: DeviceUncheckedUpdateManyWithoutSecurityDetailsNestedInput
@@ -7763,6 +7792,7 @@ export namespace Prisma {
 
   export type DeviceCreateWithoutSecurityDetailsInput = {
     id?: string
+    machineId?: string
     type: $Enums.DeviceType
     browser: string
     name: string
@@ -7779,6 +7809,7 @@ export namespace Prisma {
 
   export type DeviceUncheckedCreateWithoutSecurityDetailsInput = {
     id?: string
+    machineId?: string
     type: $Enums.DeviceType
     browser: string
     name: string
@@ -7859,6 +7890,7 @@ export namespace Prisma {
     OR?: DeviceScalarWhereInput[]
     NOT?: DeviceScalarWhereInput | DeviceScalarWhereInput[]
     id?: StringFilter<"Device"> | string
+    machineId?: StringFilter<"Device"> | string
     securityDetailsId?: StringFilter<"Device"> | string
     type?: EnumDeviceTypeFilter<"Device"> | $Enums.DeviceType
     browser?: StringFilter<"Device"> | string
@@ -7881,7 +7913,7 @@ export namespace Prisma {
     lastResetAttemptTime?: Date | string
     failedLoginAttemptNumber?: number
     lastLoginTime?: Date | string
-    blockedUntil?: Date | string | null
+    suspendUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutSecurityDetailsInput
@@ -7895,7 +7927,7 @@ export namespace Prisma {
     lastResetAttemptTime?: Date | string
     failedLoginAttemptNumber?: number
     lastLoginTime?: Date | string
-    blockedUntil?: Date | string | null
+    suspendUntil?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -7923,7 +7955,7 @@ export namespace Prisma {
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastLoginTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    blockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    suspendUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutSecurityDetailsNestedInput
@@ -7937,13 +7969,14 @@ export namespace Prisma {
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastLoginTime?: DateTimeFieldUpdateOperationsInput | Date | string
-    blockedUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    suspendUntil?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type DeviceCreateManySecurityDetailsInput = {
     id?: string
+    machineId?: string
     type: $Enums.DeviceType
     browser: string
     name: string
@@ -7960,6 +7993,7 @@ export namespace Prisma {
 
   export type DeviceUpdateWithoutSecurityDetailsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    machineId?: StringFieldUpdateOperationsInput | string
     type?: EnumDeviceTypeFieldUpdateOperationsInput | $Enums.DeviceType
     browser?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -7976,6 +8010,7 @@ export namespace Prisma {
 
   export type DeviceUncheckedUpdateWithoutSecurityDetailsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    machineId?: StringFieldUpdateOperationsInput | string
     type?: EnumDeviceTypeFieldUpdateOperationsInput | $Enums.DeviceType
     browser?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -7992,6 +8027,7 @@ export namespace Prisma {
 
   export type DeviceUncheckedUpdateManyWithoutSecurityDetailsInput = {
     id?: StringFieldUpdateOperationsInput | string
+    machineId?: StringFieldUpdateOperationsInput | string
     type?: EnumDeviceTypeFieldUpdateOperationsInput | $Enums.DeviceType
     browser?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string

@@ -147,13 +147,14 @@ exports.Prisma.SecurityDetailsScalarFieldEnum = {
   lastResetAttemptTime: 'lastResetAttemptTime',
   failedLoginAttemptNumber: 'failedLoginAttemptNumber',
   lastLoginTime: 'lastLoginTime',
-  blockedUntil: 'blockedUntil',
+  suspendUntil: 'suspendUntil',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
 exports.Prisma.DeviceScalarFieldEnum = {
   id: 'id',
+  machineId: 'machineId',
   securityDetailsId: 'securityDetailsId',
   type: 'type',
   browser: 'browser',

@@ -46,6 +46,9 @@ const loginUser = async (payload: ILoginCred, clientInfo: IClientInfo) => {
       data: {
         lastLoginTime: new Date(),
         failedLoginAttemptNumber: 0,
+        otpToken: null,
+        suspendUntil: null,
+        resetAttemptNumber: 0,
       },
     });
 
@@ -199,8 +202,6 @@ const changePassword = async (
 
 //Forget password
 const forgetPassword = async (payload: { email: string }) => {
-  // Destructure data
-
   // Check if user exists and password is correct
   const foundUser = await prisma.user.findUnique({
     where: {
@@ -216,11 +217,11 @@ const forgetPassword = async (payload: { email: string }) => {
     throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }
 
-  const { otpToken, blockedUntil, lastResetAttemptTime, resetAttemptNumber } =
+  const { otpToken, suspendUntil, lastResetAttemptTime, resetAttemptNumber } =
     foundUser.securityDetails;
 
   // Check if the user is blocked due to multiple failed attempts
-  if (blockedUntil && new Date(blockedUntil) > new Date()) {
+  if (suspendUntil && new Date(suspendUntil) > new Date()) {
     throw new AppError(
       httpStatus.FORBIDDEN,
       "User is blocked due to multiple failed attempts. Please try again later."
@@ -275,6 +276,11 @@ const forgetPassword = async (payload: { email: string }) => {
   // Increase attempt count
   let newNoOfAttempt = resetAttemptNumber ? resetAttemptNumber + 1 : 1;
 
+  // Check if the user is blocked due to multiple failed attempts for more than 60 minutes then reset the attempt count to 1
+  if (suspendUntil && new Date(suspendUntil) < new Date()) {
+    newNoOfAttempt = 1;
+  }
+
   // If the number of attempts exceeds 3, block the user for 30 minutes
   if (newNoOfAttempt > 3) {
     await prisma.securityDetails.update({
@@ -284,7 +290,7 @@ const forgetPassword = async (payload: { email: string }) => {
       data: {
         otpToken: createdOtpToken,
         resetAttemptNumber: newNoOfAttempt,
-        blockedUntil: new Date(Date.now() + 30 * 60 * 1000), // Block for 30 minutes
+        suspendUntil: new Date(Date.now() + 30 * 60 * 1000), // Block for 30 minutes
       },
     });
     throw new AppError(
@@ -314,10 +320,17 @@ const forgetPassword = async (payload: { email: string }) => {
       otpToken: createdOtpToken,
       resetAttemptNumber: newNoOfAttempt,
       lastResetAttemptTime: new Date(), // Set the time when OTP was requested
+      suspendUntil: null,
     },
   });
 
-  return { message: `OTP has been sent to ${foundUser.email}` };
+  const remainAttemptNumber = 3 - newNoOfAttempt;
+  return {
+    message: `OTP has been sent to ${foundUser.email}`,
+    attemptLeft: `You have ${remainAttemptNumber} ${
+      remainAttemptNumber > 1 ? "attempts" : "attempt"
+    } left`,
+  };
 };
 
 export const authService = {

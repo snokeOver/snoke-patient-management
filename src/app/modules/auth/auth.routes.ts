@@ -3,6 +3,8 @@ import { authController } from "./auth.controller";
 import auth from "../../middleWares/auth";
 import { UserRole } from "../../../../generated/prisma";
 import clientInfoParser from "../../middleWares/clientInfoParser";
+import { validateRequest } from "../../middleWares/validateRequest";
+import { validateAuth } from "./auth.validate";
 
 const authRoutes = express.Router();
 
@@ -16,5 +18,17 @@ authRoutes.post(
 );
 
 authRoutes.post("/forget-password", authController.forgetPassword);
+
+authRoutes.post(
+  "/verify-otp",
+  validateRequest(validateAuth.verifyOtp),
+  authController.verifyOTP
+);
+
+authRoutes.post(
+  "/reset-password",
+  validateRequest(validateAuth.resetPassword),
+  authController.resetPassword
+);
 
 export default authRoutes;

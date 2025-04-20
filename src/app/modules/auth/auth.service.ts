@@ -205,6 +205,15 @@ const changePassword = async (
   // Check if the user is suspended due to multiple failed attempts for more than 60 minutes then reset the attempt count to 1
   if (suspendUntil && new Date(suspendUntil) < new Date()) {
     newNoOfAttempt = 1;
+    await prisma.securityDetails.update({
+      where: {
+        userId: foundUser.id,
+      },
+      data: {
+        failedLoginAttemptNumber: newNoOfAttempt,
+        suspendUntil: null,
+      },
+    });
   }
 
   // If the number of failed attempts exceeds 5, suspend account for 30 minutes
@@ -296,7 +305,7 @@ const forgetPassword = async (payload: { email: string }) => {
     throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }
 
-  const { otpToken, suspendUntil, lastResetAttemptTime, resetAttemptNumber } =
+  const { suspendUntil, lastResetAttemptTime, resetAttemptNumber } =
     foundUser.securityDetails;
 
   // Check if the user is blocked due to multiple failed attempts
@@ -305,27 +314,6 @@ const forgetPassword = async (payload: { email: string }) => {
       httpStatus.FORBIDDEN,
       "This account is suspended due to multiple failed attempts. Please try again later."
     );
-  }
-
-  // Check if OTP token exists and verify it
-  if (otpToken) {
-    try {
-      const decodedUser = verifyToken(
-        otpToken,
-        config.jwt.jwt_access_secret as Secret
-      );
-    } catch (error) {
-      if (error instanceof TokenExpiredError) {
-        // Handle token expiry
-        throw new AppError(
-          httpStatus.UNAUTHORIZED,
-          "OTP expired! Please try again"
-        );
-      } else {
-        // Invalid token error
-        throw new AppError(httpStatus.UNAUTHORIZED, "Invalid token!");
-      }
-    }
   }
 
   // Check if the user can request a new OTP (only after 60 seconds from the last request)
@@ -346,10 +334,10 @@ const forgetPassword = async (payload: { email: string }) => {
     {
       otp,
       email: foundUser.email as string,
-      resetAttemptNumber: resetAttemptNumber || 1, // Start counting attempts from the existing or zero
     },
-    config.jwt.jwt_access_secret as Secret,
-    config.jwt.jwt_access_expires_in as string
+
+    config.jwt.jwt_otp_secret as Secret,
+    config.jwt.jwt_otp_expire_in as string
   );
 
   // Increase attempt count
@@ -412,9 +400,242 @@ const forgetPassword = async (payload: { email: string }) => {
   };
 };
 
+//verify OTP
+const verifyOTP = async (payload: { email: string; otp: string }) => {
+  const allowedAttempt = Number(config.allowed.failed_attempts);
+  const suspendTIme = Number(config.allowed.suspend_time_failed_attempt);
+
+  if (!payload)
+    throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
+
+  //destructure data
+  const { email, otp } = payload;
+
+  //check if user exist and password is correct
+  const foundUser = await prisma.user.findUnique({
+    where: {
+      email,
+      status: UserStatus.ACTIVE,
+    },
+    include: {
+      securityDetails: true,
+    },
+  });
+
+  if (!foundUser || !foundUser.securityDetails)
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+
+  const {
+    otpToken,
+    suspendUntil,
+    lastResetAttemptTime,
+    failedLoginAttemptNumber,
+  } = foundUser.securityDetails;
+
+  // Check if the user is suspended due to multiple failed attempts for less than 60 minutes
+  if (suspendUntil && new Date(suspendUntil) > new Date()) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "This account is suspended due to multiple failed attempts. Please try again later."
+    );
+  }
+
+  // console.log(foundUser.securityDetails);
+
+  // Increase failed attempt count
+  let newNoOfAttempt = failedLoginAttemptNumber
+    ? failedLoginAttemptNumber + 1
+    : 1;
+
+  // Check if the user is suspended due to multiple failed attempts for more than 60 minutes then reset the attempt count to 1
+  if (suspendUntil && new Date(suspendUntil) < new Date()) {
+    newNoOfAttempt = 1;
+    await prisma.securityDetails.update({
+      where: {
+        userId: foundUser.id,
+      },
+      data: {
+        failedLoginAttemptNumber: newNoOfAttempt,
+        suspendUntil: null,
+      },
+    });
+  }
+
+  // If the number of failed attempts exceeds 5, suspend account for 30 minutes
+  if (newNoOfAttempt >= allowedAttempt) {
+    await prisma.securityDetails.update({
+      where: {
+        userId: foundUser.id,
+      },
+      data: {
+        failedLoginAttemptNumber: newNoOfAttempt,
+        suspendUntil: new Date(Date.now() + suspendTIme * 60 * 1000), // suspend for 60 minutes
+      },
+    });
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You have reached the maximum number of failed attempts. Please try again later."
+    );
+  }
+
+  let decodedOtp = null;
+
+  if (otpToken) {
+    try {
+      const decodedToken = verifyToken(
+        otpToken,
+        config.jwt.jwt_otp_secret as Secret
+      );
+      decodedOtp = decodedToken.otp;
+    } catch (error) {
+      if (error instanceof TokenExpiredError) {
+        // Handle token expiry
+        throw new AppError(
+          httpStatus.UNAUTHORIZED,
+          "OTP expired! Please try again"
+        );
+      } else {
+        // Invalid token error
+        throw new AppError(httpStatus.UNAUTHORIZED, "Invalid token!");
+      }
+    }
+  }
+
+  if (!decodedOtp || decodedOtp !== otp) {
+    await prisma.securityDetails.update({
+      where: {
+        userId: foundUser.id,
+      },
+      data: {
+        failedLoginAttemptNumber: newNoOfAttempt,
+      },
+    });
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      `OTP is incorrect!, You have ${
+        allowedAttempt - newNoOfAttempt
+      } attempts left`
+    );
+  }
+
+  const createdResetToken = createOtpToken(
+    {
+      otp,
+      email: foundUser.email as string,
+    },
+
+    config.jwt.jwt_pass_reset_secret as Secret,
+    config.jwt.jwt_pass_reset_expires_in as string
+  );
+
+  await prisma.securityDetails.update({
+    where: {
+      userId: foundUser.id,
+    },
+    data: {
+      otpToken: createdResetToken,
+    },
+  });
+
+  return { resetToken: createdResetToken };
+};
+
+//Reset password
+const resetPassword = async (
+  token: string | undefined,
+  payload: { password: string }
+) => {
+  if (!token)
+    throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
+
+  let email = "";
+
+  try {
+    const decoded = verifyToken(
+      token,
+      config.jwt.jwt_pass_reset_secret as string
+    );
+
+    email = decoded.email;
+  } catch (error: any) {
+    if (error instanceof TokenExpiredError) {
+      throw new AppError(
+        httpStatus.UNAUTHORIZED,
+        "Session timeout! Please try again"
+      );
+    }
+    throw new AppError(httpStatus.UNAUTHORIZED, error.message);
+  }
+
+  //check if user exist
+  const foundUser = await prisma.user.findUnique({
+    where: {
+      email,
+      status: UserStatus.ACTIVE,
+    },
+    include: {
+      securityDetails: true,
+    },
+  });
+
+  if (!foundUser || !foundUser.securityDetails)
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+
+  if (
+    !foundUser.securityDetails.otpToken ||
+    token !== foundUser.securityDetails.otpToken
+  ) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      "Session terminated! Please try again"
+    );
+  }
+
+  if (await bcrypt.compare(payload.password, foundUser.password)) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `New password can't be the same as Old password!,`
+    );
+  }
+
+  const hashedNewPassword: string = await bcrypt.hash(
+    payload.password,
+    Number(config.jwt.bcrypt_salt_rounds)
+  );
+
+  const result = await prisma.$transaction(async (tx) => {
+    const updatedUser = await tx.user.update({
+      where: {
+        email,
+      },
+      data: {
+        password: hashedNewPassword,
+      },
+    });
+
+    const updatedSecurityDetails = await tx.securityDetails.update({
+      where: {
+        userId: updatedUser.id,
+      },
+      data: {
+        failedLoginAttemptNumber: 0,
+        suspendUntil: null,
+        otpToken: null,
+        resetAttemptNumber: 0,
+      },
+    });
+
+    return { updatedUser, updatedSecurityDetails };
+  });
+
+  return { message: "Password reset successfully" };
+};
+
 export const authService = {
   loginUser,
   getAccessToken,
   changePassword,
   forgetPassword,
+  verifyOTP,
+  resetPassword,
 };

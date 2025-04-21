@@ -1,12 +1,10 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { userController } from "./user.controller";
 import auth from "../../middleWares/auth";
 import { UserRole } from "../../../../generated/prisma";
 import clientInfoParser from "../../middleWares/clientInfoParser";
-import { validateRequest } from "../../middleWares/validateRequest";
 import { validateRegisterUser } from "./user.validate";
-import multer from "multer";
-import path from "path";
+
 import { fileUploader } from "../../utils/fileUploader";
 
 const userRotes = express.Router();
@@ -15,10 +13,14 @@ userRotes.post(
   "/",
   auth(UserRole.SUPER_ADMIN),
   fileUploader.multerUpload.single("file"),
-  validateRequest(validateRegisterUser.createAdmin),
   clientInfoParser,
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body.data = validateRegisterUser.createAdmin.parse(
+      JSON.parse(req.body.data)
+    );
 
-  userController.createAdmin
+    return userController.createAdmin(req, res, next);
+  }
 );
 
 export default userRotes;

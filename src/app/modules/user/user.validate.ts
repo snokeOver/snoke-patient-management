@@ -1,16 +1,12 @@
 import { z } from "zod";
 
 const createAdmin = z.object({
-  body: z
+  password: z.string(),
+  admin: z
     .object({
-      password: z.string(),
-      admin: z
-        .object({
-          contactNumber: z.string(),
-          name: z.string(),
-          email: z.string().email(),
-        })
-        .strict(),
+      contactNumber: z.string(),
+      name: z.string(),
+      email: z.string().email(),
     })
     .strict(),
 });

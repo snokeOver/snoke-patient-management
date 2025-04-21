@@ -54,12 +54,12 @@ const cloudinaryUpload = async (filePath: string, public_id: string) => {
       public_id,
     });
 
-    // If upload is successful, delete the original file
-    await deleteOriginalFile(filePath);
-
     return uploadResult;
   } catch (error) {
     throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "File upload failed");
+  } finally {
+    // Finally delete the original file
+    await deleteOriginalFile(filePath);
   }
 };
 

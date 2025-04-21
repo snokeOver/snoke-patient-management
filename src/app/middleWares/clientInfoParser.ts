@@ -35,7 +35,7 @@ const clientInfoParser = (req: Request, res: Response, next: NextFunction) => {
       resetAttemptNumber: 0, // Default value, modify based on your logic
       lastResetAttemptTime: new Date(),
       failedLoginAttemptNumber: 0, // Default value, modify based on your logic
-      blockedUntil: null,
+      suspendUntil: null,
       lastLoginTime: new Date(), // Current login time
     },
   };

@@ -34,13 +34,16 @@ export default {
       process.env.SUSPEND_MINUTES_FOR_FAILED_RESET_ATTEMPT!,
   },
 
+  cloudinary: {
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+    api_key: process.env.CLOUDINARY_API_KEY!,
+    api_secret: process.env.CLOUDINARY_API_SECRET!,
+  },
+
   admin_email: process.env.ADMIN_EMAIL,
   admin_password: process.env.ADMIN_PASSWORD,
   admin_profile_photo: process.env.ADMIN_PROFILE_PHOTO,
   admin_mobile_number: process.env.ADMIN_MOBILE_NUMBER,
-  cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
-  cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET,
 
   ssl: {
     store_name: process.env.STORE_NAME,

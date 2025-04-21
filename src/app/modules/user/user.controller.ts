@@ -4,7 +4,11 @@ import httpStatus from "http-status";
 import { tryCatchAsync } from "../../utils/tryCatchAsync";
 
 const createAdmin = tryCatchAsync(async (req, res) => {
-  const result = await userService.createAdmin(req.body, req.body.clientInfo);
+  const result = await userService.createAdmin(
+    req.body,
+    req.body.clientInfo,
+    req.file
+  );
 
   sendResponse({
     res,

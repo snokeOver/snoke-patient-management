@@ -5,14 +5,19 @@ import { UserRole } from "../../../../generated/prisma";
 import clientInfoParser from "../../middleWares/clientInfoParser";
 import { validateRequest } from "../../middleWares/validateRequest";
 import { validateRegisterUser } from "./user.validate";
+import multer from "multer";
+import path from "path";
+import { fileUploader } from "../../utils/fileUploader";
 
 const userRotes = express.Router();
 
 userRotes.post(
   "/",
   auth(UserRole.SUPER_ADMIN),
+  fileUploader.multerUpload.single("file"),
   validateRequest(validateRegisterUser.createAdmin),
   clientInfoParser,
+
   userController.createAdmin
 );
 

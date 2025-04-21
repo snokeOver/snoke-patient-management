@@ -1,9 +1,10 @@
 import { adminService } from "./admin.service";
 import { pick } from "../../utils/pick";
-import { paginationProperties, validSearchableFields } from "./admin.constant";
+import { validSearchableFields } from "./admin.constant";
 import httpStatus from "http-status";
 import { sendResponse } from "../../utils/sendResponse";
 import { tryCatchAsync } from "../../utils/tryCatchAsync";
+import { paginationProperties } from "../../constant/pagination";
 
 //Delete single admin by id
 const deleteSingleAdmin = tryCatchAsync(async (req, res) => {

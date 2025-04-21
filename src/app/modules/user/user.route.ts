@@ -6,8 +6,22 @@ import clientInfoParser from "../../middleWares/clientInfoParser";
 import { validateRegisterUser } from "./user.validate";
 
 import { fileUploader } from "../../utils/fileUploader";
+import { validateRequest } from "../../middleWares/validateRequest";
 
 const userRotes = express.Router();
+
+userRotes.get(
+  "/",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  userController.getAllUser
+);
+
+userRotes.patch(
+  "/status/:id",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  validateRequest(validateRegisterUser.updateStatus),
+  userController.updateUserStatus
+);
 
 userRotes.post(
   "/create-admin",

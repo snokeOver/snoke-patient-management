@@ -6,5 +6,3 @@ export const validSearchableFields = [
 ];
 
 export const adminSearchableFields = ["name", "email"];
-
-export const paginationProperties = ["page", "limit", "sortBy", "sortOrder"];

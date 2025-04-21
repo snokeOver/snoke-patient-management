@@ -2,6 +2,9 @@ import { userService } from "./user.service";
 import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import { tryCatchAsync } from "../../utils/tryCatchAsync";
+import { pick } from "../../utils/pick";
+import { validSearchableFields } from "./user.constant";
+import { paginationProperties } from "../../constant/pagination";
 
 //Create admin
 const createAdmin = tryCatchAsync(async (req, res) => {
@@ -60,8 +63,44 @@ const createPatient = tryCatchAsync(async (req, res) => {
   });
 });
 
+//Get all users
+const getAllUser = tryCatchAsync(async (req, res) => {
+  const filteredQuery = pick(req.query, validSearchableFields);
+  const pagination = pick(req.query, paginationProperties);
+
+  const result = await userService.getAllUsers(filteredQuery, pagination);
+
+  sendResponse({
+    res,
+    sendData: {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "All users fetched successfully",
+      data: result.data,
+      meta: result.meta,
+    },
+  });
+});
+
+//Update user status by id
+const updateUserStatus = tryCatchAsync(async (req, res) => {
+  const result = await userService.updateUserStatus(req.params.id, req.body);
+
+  sendResponse({
+    res,
+    sendData: {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "User status updated successfully",
+      data: result,
+    },
+  });
+});
+
 export const userController = {
   createAdmin,
   createDoctor,
   createPatient,
+  getAllUser,
+  updateUserStatus,
 };

@@ -1,4 +1,5 @@
-import { Doctor, Patient } from "../../../../generated/prisma";
+import { Doctor, Patient, User } from "../../../../generated/prisma";
+import { IMeta } from "../../types";
 
 export interface IUser {
   name: string;
@@ -19,4 +20,17 @@ export interface IDoctorUser {
 export interface IPatientUser {
   password: string;
   patient: Patient;
+}
+
+export type TUserWithoutPassword = Omit<User, "password">;
+
+export interface IAllUser {
+  meta: IMeta;
+  data: TUserWithoutPassword[];
+}
+
+export interface IUserFilteredQuery {
+  email?: string | undefined;
+  contactNumber?: string | undefined;
+  searchTerm?: string | undefined;
 }

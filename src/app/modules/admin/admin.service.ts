@@ -1,8 +1,11 @@
 import { Admin, Prisma, User, UserStatus } from "../../../../generated/prisma";
+import AppError from "../../middleWares/errorHandler/appError";
 import { IMeta, IPagination } from "../../types";
 import { paginationHelper } from "../../utils/paginationHealper";
 import { prisma } from "../../utils/prisma";
 import { adminSearchableFields } from "./admin.constant";
+
+import httpStatus from "http-status";
 
 import {
   IAdminFilteredQuery,
@@ -12,12 +15,14 @@ import {
 
 //Update single admin data by id
 const deleteSingleAdmin = async (id: string): Promise<IDeletedAdmin> => {
-  await prisma.admin.findUniqueOrThrow({
+  const foundAdmin = await prisma.admin.findUnique({
     where: {
       id,
       isDeleted: false,
     },
   });
+
+  if (!foundAdmin) throw new AppError(httpStatus.NOT_FOUND, "Admin not found");
 
   const result = await prisma.$transaction(async (tx) => {
     const deletedAdmin = await tx.admin.update({
@@ -48,12 +53,14 @@ const updateSingleAdmin = async (
   id: string,
   data: Partial<Admin>
 ): Promise<Admin> => {
-  await prisma.admin.findUniqueOrThrow({
+  const foundAdmin = await prisma.admin.findUnique({
     where: {
       id,
       isDeleted: false,
     },
   });
+
+  if (!foundAdmin) throw new AppError(httpStatus.NOT_FOUND, "Admin not found");
 
   const result = await prisma.admin.update({
     where: {
@@ -66,12 +73,14 @@ const updateSingleAdmin = async (
 
 //Get single admin data by id
 const getSingleAdmin = async (id: string): Promise<Admin | null> => {
-  await prisma.admin.findUniqueOrThrow({
+  const foundAdmin = await prisma.admin.findUnique({
     where: {
       id,
       isDeleted: false,
     },
   });
+
+  if (!foundAdmin) throw new AppError(httpStatus.NOT_FOUND, "Admin not found");
 
   const result = await prisma.admin.findUnique({
     where: {

@@ -1,20 +1,36 @@
-import { UserRole } from "../../../../generated/prisma";
+import {
+  Admin,
+  Doctor,
+  Patient,
+  Prisma,
+  User,
+  UserRole,
+} from "../../../../generated/prisma";
 
 import bcrypt from "bcrypt";
 import { prisma } from "../../utils/prisma";
 import config from "../../config";
 import AppError from "../../middleWares/errorHandler/appError";
 import httpStatus from "http-status";
-import { IAdminUser, IDoctorUser, IPatientUser } from "./user.interface";
-import { IClientInfo, IFile } from "../../types";
+import {
+  IAdminUser,
+  IAllUser,
+  IDoctorUser,
+  IPatientUser,
+  IUserFilteredQuery,
+  TUserWithoutPassword,
+} from "./user.interface";
+import { IClientInfo, IFile, IPagination } from "../../types";
 import { fileUploader } from "../../utils/fileUploader";
+import { paginationHelper } from "../../utils/paginationHealper";
+import { userSearchableFields } from "./user.constant";
 
 //Create admin
 const createAdmin = async (
   data: IAdminUser,
   clientInfo: IClientInfo,
   file: IFile | undefined
-) => {
+): Promise<Admin> => {
   //check if user exist before take any costly action like upload image
   const foundUser = await prisma.user.findUnique({
     where: {
@@ -69,7 +85,7 @@ const createAdmin = async (
       data: data.admin,
     });
 
-    return { createdAdmin, createdUser };
+    return createdAdmin;
   });
 
   return result;
@@ -80,7 +96,7 @@ const createDoctor = async (
   data: IDoctorUser,
   clientInfo: IClientInfo,
   file: IFile | undefined
-) => {
+): Promise<Doctor> => {
   //check if user exist before take any costly action like upload image
   const foundUser = await prisma.doctor.findUnique({
     where: {
@@ -135,7 +151,7 @@ const createDoctor = async (
       data: data.doctor,
     });
 
-    return { createdDoctor, createdUser };
+    return createdDoctor;
   });
 
   return result;
@@ -146,7 +162,7 @@ const createPatient = async (
   data: IPatientUser,
   clientInfo: IClientInfo,
   file: IFile | undefined
-) => {
+): Promise<Patient> => {
   //check if user exist before take any costly action like upload image
   const foundUser = await prisma.patient.findUnique({
     where: {
@@ -201,9 +217,107 @@ const createPatient = async (
       data: data.patient,
     });
 
-    return { createdPatient, createdUser };
+    return createdPatient;
   });
 
+  return result;
+};
+
+//Get all Users data
+const getAllUsers = async (
+  query: IUserFilteredQuery,
+  pagination: IPagination
+): Promise<IAllUser> => {
+  const { page, take, skip, orderBy } = paginationHelper(pagination);
+
+  // console.log("Pagination data:", query);
+  const { searchTerm, ...filterData } = query;
+  const searchCondition: Prisma.UserWhereInput[] = [];
+
+  if (query.searchTerm) {
+    searchCondition.push({
+      OR: userSearchableFields.map((field) => ({
+        [field]: { contains: query.searchTerm, mode: "insensitive" },
+      })),
+    });
+  }
+
+  if (Object.keys(filterData).length) {
+    searchCondition.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: {
+          equals: (filterData as any)[key],
+        },
+      })),
+    });
+  }
+
+  const whereConditions: Prisma.UserWhereInput = { AND: searchCondition };
+
+  const result = await prisma.user.findMany({
+    where: whereConditions,
+    skip,
+    take,
+    orderBy,
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+      needPasswordChange: true,
+      admin: true,
+      doctor: true,
+      patient: true,
+    },
+  });
+
+  const total = await prisma.user.count({
+    where: whereConditions,
+  });
+
+  return {
+    meta: {
+      page,
+      limit: take,
+      total,
+    },
+    data: result,
+  };
+};
+
+//Update single user status by id
+const updateUserStatus = async (
+  id: string,
+  data: Partial<User>
+): Promise<TUserWithoutPassword> => {
+  const foundUser = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if (!foundUser) throw new AppError(httpStatus.NOT_FOUND, "User not found");
+
+  const result = await prisma.user.update({
+    where: {
+      id,
+    },
+    data,
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+      needPasswordChange: true,
+      admin: true,
+      doctor: true,
+      patient: true,
+    },
+  });
   return result;
 };
 
@@ -211,4 +325,6 @@ export const userService = {
   createAdmin,
   createDoctor,
   createPatient,
+  getAllUsers,
+  updateUserStatus,
 };

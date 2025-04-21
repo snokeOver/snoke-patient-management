@@ -170,6 +170,38 @@ exports.Prisma.DeviceScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.DoctorScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  profilePhoto: 'profilePhoto',
+  contactNumber: 'contactNumber',
+  address: 'address',
+  registrationNumber: 'registrationNumber',
+  experience: 'experience',
+  gender: 'gender',
+  appointmentFee: 'appointmentFee',
+  qualification: 'qualification',
+  currentWorkingPlace: 'currentWorkingPlace',
+  designation: 'designation',
+  isDeleted: 'isDeleted',
+  averageRating: 'averageRating',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PatientScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  name: 'name',
+  profilePhoto: 'profilePhoto',
+  contactNumber: 'contactNumber',
+  address: 'address',
+  isDeleted: 'isDeleted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -205,11 +237,18 @@ exports.DeviceType = exports.$Enums.DeviceType = {
   OTHER: 'OTHER'
 };
 
+exports.Gender = exports.$Enums.Gender = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Admin: 'Admin',
   SecurityDetails: 'SecurityDetails',
-  Device: 'Device'
+  Device: 'Device',
+  Doctor: 'Doctor',
+  Patient: 'Patient'
 };
 
 /**

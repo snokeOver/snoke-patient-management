@@ -5,6 +5,7 @@ import config from "../config";
 import { unlink } from "fs/promises";
 import AppError from "../middleWares/errorHandler/appError";
 import httpStatus from "http-status";
+import { ICloudinaryResponse } from "../types";
 
 cloudinary.config({
   cloud_name: config.cloudinary.cloud_name,
@@ -48,7 +49,10 @@ const storage = multer.diskStorage({
 const multerUpload = multer({ storage: storage });
 
 //Upload to cloudinary
-const cloudinaryUpload = async (filePath: string, public_id: string) => {
+const cloudinaryUpload = async (
+  filePath: string,
+  public_id: string
+): Promise<ICloudinaryResponse> => {
   try {
     const uploadResult = await cloudinary.uploader.upload(filePath, {
       public_id,

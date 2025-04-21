@@ -10,7 +10,7 @@ import { fileUploader } from "../../utils/fileUploader";
 const userRotes = express.Router();
 
 userRotes.post(
-  "/",
+  "/create-admin",
   auth(UserRole.SUPER_ADMIN),
   fileUploader.multerUpload.single("file"),
   clientInfoParser,
@@ -20,6 +20,20 @@ userRotes.post(
     );
 
     return userController.createAdmin(req, res, next);
+  }
+);
+
+userRotes.post(
+  "/create-doctor",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  fileUploader.multerUpload.single("file"),
+  clientInfoParser,
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body.data = validateRegisterUser.createDoctor.parse(
+      JSON.parse(req.body.data)
+    );
+
+    return userController.createDoctor(req, res, next);
   }
 );
 

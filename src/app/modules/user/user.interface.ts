@@ -1,4 +1,4 @@
-import { Doctor } from "../../../../generated/prisma";
+import { Doctor, Patient } from "../../../../generated/prisma";
 
 export interface IUser {
   name: string;
@@ -14,4 +14,9 @@ export interface IAdminUser {
 export interface IDoctorUser {
   password: string;
   doctor: Doctor;
+}
+
+export interface IPatientUser {
+  password: string;
+  patient: Patient;
 }

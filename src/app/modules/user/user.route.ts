@@ -37,4 +37,17 @@ userRotes.post(
   }
 );
 
+userRotes.post(
+  "/create-patient",
+  fileUploader.multerUpload.single("file"),
+  clientInfoParser,
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body.data = validateRegisterUser.createPatient.parse(
+      JSON.parse(req.body.data)
+    );
+
+    return userController.createPatient(req, res, next);
+  }
+);
+
 export default userRotes;

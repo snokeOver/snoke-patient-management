@@ -5,7 +5,7 @@ import { prisma } from "../../utils/prisma";
 import config from "../../config";
 import AppError from "../../middleWares/errorHandler/appError";
 import httpStatus from "http-status";
-import { IAdminUser, IDoctorUser } from "./user.interface";
+import { IAdminUser, IDoctorUser, IPatientUser } from "./user.interface";
 import { IClientInfo, IFile } from "../../types";
 import { fileUploader } from "../../utils/fileUploader";
 
@@ -141,7 +141,74 @@ const createDoctor = async (
   return result;
 };
 
+//Create patient
+const createPatient = async (
+  data: IPatientUser,
+  clientInfo: IClientInfo,
+  file: IFile | undefined
+) => {
+  //check if user exist before take any costly action like upload image
+  const foundUser = await prisma.patient.findUnique({
+    where: {
+      email: data.patient.email,
+    },
+  });
+
+  if (foundUser) {
+    if (file) await fileUploader.deleteOriginalFile(file.path);
+    throw new AppError(httpStatus.CONFLICT, "Email already exist");
+  }
+
+  //Upload image to cloudinary
+  if (file) {
+    const uploadedResult = await fileUploader.cloudinaryUpload(
+      file.path,
+      file.filename.split(".")[0]
+    );
+    data.patient.profilePhoto = uploadedResult.secure_url;
+  }
+
+  //Hashed password and construct user data
+  const hashedPassword: string = await bcrypt.hash(
+    data.password,
+    Number(config.jwt.bcrypt_salt_rounds)
+  );
+
+  const userData = {
+    email: data.patient.email,
+    password: hashedPassword,
+    role: UserRole.PATIENT,
+  };
+
+  const result = await prisma.$transaction(async (tx) => {
+    const createdUser = await tx.user.create({ data: userData });
+
+    const createdSecurityDetails = await tx.securityDetails.create({
+      data: {
+        userId: createdUser.id,
+        ...clientInfo.securityDetails,
+      },
+    });
+
+    const createdDevice = await tx.device.create({
+      data: {
+        securityDetailsId: createdSecurityDetails.id, // Link device to security details
+        ...clientInfo.device, // Spread the device data
+      },
+    });
+
+    const createdPatient = await tx.patient.create({
+      data: data.patient,
+    });
+
+    return { createdPatient, createdUser };
+  });
+
+  return result;
+};
+
 export const userService = {
   createAdmin,
   createDoctor,
+  createPatient,
 };

@@ -9,7 +9,7 @@ import { JwtPayload, Secret, TokenExpiredError } from "jsonwebtoken";
 import { UserStatus } from "../../../../generated/prisma";
 import { IClientInfo, IJwtPayload } from "../../types";
 import { createOtpToken, createToken, verifyToken } from "../../utils/jwtToken";
-import { generateOtp } from "../../utils/generateOtp";
+import { generateLink, generateOtp } from "../../utils/generator";
 import { emailSender } from "../../utils/emailSender";
 
 //Login user with email and password
@@ -631,6 +631,178 @@ const resetPassword = async (
   return { message: "Password reset successfully" };
 };
 
+//send email verification email
+const sendVerificationEmail = async (
+  payload: { email: string },
+  user: JwtPayload | undefined
+) => {
+  const allowedAttempt = Number(config.allowed.verify_eamil_attempts);
+  const suspendTIme = Number(
+    config.allowed.suspend_time_failed_verify_email_attempt
+  );
+
+  if (!user)
+    throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
+
+  if (user.email !== payload.email)
+    throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
+
+  // Check if user exists and password is correct
+  const foundUser = await prisma.user.findUnique({
+    where: {
+      email: payload.email,
+      status: UserStatus.ACTIVE,
+    },
+    include: {
+      securityDetails: true,
+    },
+  });
+
+  if (!foundUser || !foundUser.securityDetails) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  const { suspendUntil, lastResetAttemptTime, emailVerifyAttemptNumber } =
+    foundUser.securityDetails;
+
+  // Check if the user is blocked due to multiple failed attempts
+  if (suspendUntil && new Date(suspendUntil) > new Date()) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "This account is suspended due to multiple failed attempts. Please try again later."
+    );
+  }
+
+  // Check if the user can request a new URL (only after 60 seconds from the last request)
+  if (
+    lastResetAttemptTime &&
+    new Date(lastResetAttemptTime).getTime() > Date.now() - 60000
+  ) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You can only request a new verification link after 60 seconds."
+    );
+  }
+
+  // Generate OTP and OTP token
+  const otp = generateOtp();
+
+  const createdOtpToken = createOtpToken(
+    {
+      otp,
+      email: foundUser.email as string,
+    },
+
+    config.jwt.jwt_email_verify_secret as Secret,
+    config.jwt.jwt_email_verify_expires_in as string
+  );
+
+  const generatedLink = generateLink(
+    createdOtpToken,
+    foundUser.email,
+    "verify-email"
+  );
+
+  // Increase attempt count
+  let newNoOfAttempt = emailVerifyAttemptNumber
+    ? emailVerifyAttemptNumber + 1
+    : 1;
+
+  // Check if the user is blocked due to multiple failed attempts for more than 60 minutes then reset the attempt count to 1
+  if (suspendUntil && new Date(suspendUntil) < new Date()) {
+    newNoOfAttempt = 1;
+  }
+
+  // If the number of attempts exceeds allowedAttempt, block the user for 30 minutes
+  if (newNoOfAttempt > allowedAttempt) {
+    await prisma.securityDetails.update({
+      where: {
+        userId: foundUser.id,
+      },
+      data: {
+        otpToken: createdOtpToken,
+        emailVerifyAttemptNumber: newNoOfAttempt,
+        suspendUntil: new Date(Date.now() + suspendTIme * 60 * 1000), // Block for 30 minutes
+      },
+    });
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You have reached the maximum number of verification attempts. Please try again later."
+    );
+  }
+
+  // Now send the OTP email if the attempts are below the limit
+  const emailContent = await emailSender.createEmailContent(
+    { otpLink: generatedLink, expireTime: 15, userName: foundUser.id },
+    "verifyEmail"
+  );
+
+  await emailSender.sendEmail(foundUser.email, emailContent, "Vefiry Email");
+
+  // Update user with otpToken, attempt count, last OTP request time
+  const updatedUser = await prisma.securityDetails.update({
+    where: {
+      userId: foundUser.id,
+    },
+    data: {
+      otpToken: createdOtpToken,
+      emailVerifyAttemptNumber: newNoOfAttempt,
+      lastResetAttemptTime: new Date(), // Set the time when OTP was requested
+      suspendUntil: null,
+    },
+  });
+
+  const remainAttemptNumber = allowedAttempt - newNoOfAttempt;
+  return {
+    message: `Verification link has been sent to ${foundUser.email}`,
+    attemptLeft: `You have ${remainAttemptNumber} ${
+      remainAttemptNumber > 1 ? "attempts" : "attempt"
+    } left`,
+  };
+};
+
+//verify email
+const verifyEmail = async (
+  payload: { email: string },
+  user: JwtPayload | undefined
+) => {
+  if (!payload || !user)
+    throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
+
+  //destructure data
+  const { email } = payload;
+
+  if (email !== user.email)
+    throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized!");
+
+  //check if user exist and password is correct
+  const foundUser = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+    include: {
+      securityDetails: true,
+    },
+  });
+
+  if (!foundUser || !foundUser.securityDetails)
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+
+  if (foundUser.status !== UserStatus.DEACTIVE)
+    throw new AppError(httpStatus.FORBIDDEN, "Link is not valid for this user");
+
+  await prisma.user.update({
+    where: {
+      email: foundUser.email,
+    },
+    data: {
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  return { message: "Email verified successfully" };
+};
+
 export const authService = {
   loginUser,
   getAccessToken,
@@ -638,4 +810,6 @@ export const authService = {
   forgetPassword,
   verifyOTP,
   resetPassword,
+  sendVerificationEmail,
+  verifyEmail,
 };

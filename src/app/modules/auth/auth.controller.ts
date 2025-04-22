@@ -112,6 +112,40 @@ const resetPassword = tryCatchAsync(async (req, res) => {
   });
 });
 
+//send verification email
+const sendVerificationEmail = tryCatchAsync(
+  async (req: Request & { user?: JwtPayload }, res) => {
+    const result = await authService.sendVerificationEmail(req.body, req.user);
+
+    sendResponse({
+      res,
+      sendData: {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Email send successfully",
+        data: result,
+      },
+    });
+  }
+);
+
+//verify email
+const verifyEmail = tryCatchAsync(
+  async (req: Request & { user?: JwtPayload }, res) => {
+    const result = await authService.verifyEmail(req.body, req.user);
+
+    sendResponse({
+      res,
+      sendData: {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Email verification successfully",
+        data: result,
+      },
+    });
+  }
+);
+
 export const authController = {
   loginUser,
   getAccessToken,
@@ -119,4 +153,6 @@ export const authController = {
   forgetPassword,
   verifyOTP,
   resetPassword,
+  sendVerificationEmail,
+  verifyEmail,
 };

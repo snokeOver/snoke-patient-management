@@ -59,6 +59,7 @@ export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
 
 export const UserStatus: {
+  DEACTIVE: 'DEACTIVE',
   ACTIVE: 'ACTIVE',
   BLOCKED: 'BLOCKED',
   SUSPENDED: 'SUSPENDED',
@@ -3694,11 +3695,13 @@ export namespace Prisma {
   }
 
   export type SecurityDetailsAvgAggregateOutputType = {
+    emailVerifyAttemptNumber: number | null
     resetAttemptNumber: number | null
     failedLoginAttemptNumber: number | null
   }
 
   export type SecurityDetailsSumAggregateOutputType = {
+    emailVerifyAttemptNumber: number | null
     resetAttemptNumber: number | null
     failedLoginAttemptNumber: number | null
   }
@@ -3707,6 +3710,7 @@ export namespace Prisma {
     id: string | null
     userId: string | null
     otpToken: string | null
+    emailVerifyAttemptNumber: number | null
     resetAttemptNumber: number | null
     lastResetAttemptTime: Date | null
     failedLoginAttemptNumber: number | null
@@ -3720,6 +3724,7 @@ export namespace Prisma {
     id: string | null
     userId: string | null
     otpToken: string | null
+    emailVerifyAttemptNumber: number | null
     resetAttemptNumber: number | null
     lastResetAttemptTime: Date | null
     failedLoginAttemptNumber: number | null
@@ -3733,6 +3738,7 @@ export namespace Prisma {
     id: number
     userId: number
     otpToken: number
+    emailVerifyAttemptNumber: number
     resetAttemptNumber: number
     lastResetAttemptTime: number
     failedLoginAttemptNumber: number
@@ -3745,11 +3751,13 @@ export namespace Prisma {
 
 
   export type SecurityDetailsAvgAggregateInputType = {
+    emailVerifyAttemptNumber?: true
     resetAttemptNumber?: true
     failedLoginAttemptNumber?: true
   }
 
   export type SecurityDetailsSumAggregateInputType = {
+    emailVerifyAttemptNumber?: true
     resetAttemptNumber?: true
     failedLoginAttemptNumber?: true
   }
@@ -3758,6 +3766,7 @@ export namespace Prisma {
     id?: true
     userId?: true
     otpToken?: true
+    emailVerifyAttemptNumber?: true
     resetAttemptNumber?: true
     lastResetAttemptTime?: true
     failedLoginAttemptNumber?: true
@@ -3771,6 +3780,7 @@ export namespace Prisma {
     id?: true
     userId?: true
     otpToken?: true
+    emailVerifyAttemptNumber?: true
     resetAttemptNumber?: true
     lastResetAttemptTime?: true
     failedLoginAttemptNumber?: true
@@ -3784,6 +3794,7 @@ export namespace Prisma {
     id?: true
     userId?: true
     otpToken?: true
+    emailVerifyAttemptNumber?: true
     resetAttemptNumber?: true
     lastResetAttemptTime?: true
     failedLoginAttemptNumber?: true
@@ -3884,6 +3895,7 @@ export namespace Prisma {
     id: string
     userId: string
     otpToken: string | null
+    emailVerifyAttemptNumber: number
     resetAttemptNumber: number
     lastResetAttemptTime: Date
     failedLoginAttemptNumber: number
@@ -3916,6 +3928,7 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     otpToken?: boolean
+    emailVerifyAttemptNumber?: boolean
     resetAttemptNumber?: boolean
     lastResetAttemptTime?: boolean
     failedLoginAttemptNumber?: boolean
@@ -3932,6 +3945,7 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     otpToken?: boolean
+    emailVerifyAttemptNumber?: boolean
     resetAttemptNumber?: boolean
     lastResetAttemptTime?: boolean
     failedLoginAttemptNumber?: boolean
@@ -3946,6 +3960,7 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     otpToken?: boolean
+    emailVerifyAttemptNumber?: boolean
     resetAttemptNumber?: boolean
     lastResetAttemptTime?: boolean
     failedLoginAttemptNumber?: boolean
@@ -3960,6 +3975,7 @@ export namespace Prisma {
     id?: boolean
     userId?: boolean
     otpToken?: boolean
+    emailVerifyAttemptNumber?: boolean
     resetAttemptNumber?: boolean
     lastResetAttemptTime?: boolean
     failedLoginAttemptNumber?: boolean
@@ -3969,7 +3985,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type SecurityDetailsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "otpToken" | "resetAttemptNumber" | "lastResetAttemptTime" | "failedLoginAttemptNumber" | "lastLoginTime" | "suspendUntil" | "createdAt" | "updatedAt", ExtArgs["result"]["securityDetails"]>
+  export type SecurityDetailsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "otpToken" | "emailVerifyAttemptNumber" | "resetAttemptNumber" | "lastResetAttemptTime" | "failedLoginAttemptNumber" | "lastLoginTime" | "suspendUntil" | "createdAt" | "updatedAt", ExtArgs["result"]["securityDetails"]>
   export type SecurityDetailsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     device?: boolean | SecurityDetails$deviceArgs<ExtArgs>
@@ -3992,6 +4008,7 @@ export namespace Prisma {
       id: string
       userId: string
       otpToken: string | null
+      emailVerifyAttemptNumber: number
       resetAttemptNumber: number
       lastResetAttemptTime: Date
       failedLoginAttemptNumber: number
@@ -4427,6 +4444,7 @@ export namespace Prisma {
     readonly id: FieldRef<"SecurityDetails", 'String'>
     readonly userId: FieldRef<"SecurityDetails", 'String'>
     readonly otpToken: FieldRef<"SecurityDetails", 'String'>
+    readonly emailVerifyAttemptNumber: FieldRef<"SecurityDetails", 'Int'>
     readonly resetAttemptNumber: FieldRef<"SecurityDetails", 'Int'>
     readonly lastResetAttemptTime: FieldRef<"SecurityDetails", 'DateTime'>
     readonly failedLoginAttemptNumber: FieldRef<"SecurityDetails", 'Int'>
@@ -8472,6 +8490,7 @@ export namespace Prisma {
     id: 'id',
     userId: 'userId',
     otpToken: 'otpToken',
+    emailVerifyAttemptNumber: 'emailVerifyAttemptNumber',
     resetAttemptNumber: 'resetAttemptNumber',
     lastResetAttemptTime: 'lastResetAttemptTime',
     failedLoginAttemptNumber: 'failedLoginAttemptNumber',
@@ -8850,6 +8869,7 @@ export namespace Prisma {
     id?: StringFilter<"SecurityDetails"> | string
     userId?: StringFilter<"SecurityDetails"> | string
     otpToken?: StringNullableFilter<"SecurityDetails"> | string | null
+    emailVerifyAttemptNumber?: IntFilter<"SecurityDetails"> | number
     resetAttemptNumber?: IntFilter<"SecurityDetails"> | number
     lastResetAttemptTime?: DateTimeFilter<"SecurityDetails"> | Date | string
     failedLoginAttemptNumber?: IntFilter<"SecurityDetails"> | number
@@ -8865,6 +8885,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     otpToken?: SortOrderInput | SortOrder
+    emailVerifyAttemptNumber?: SortOrder
     resetAttemptNumber?: SortOrder
     lastResetAttemptTime?: SortOrder
     failedLoginAttemptNumber?: SortOrder
@@ -8883,6 +8904,7 @@ export namespace Prisma {
     OR?: SecurityDetailsWhereInput[]
     NOT?: SecurityDetailsWhereInput | SecurityDetailsWhereInput[]
     otpToken?: StringNullableFilter<"SecurityDetails"> | string | null
+    emailVerifyAttemptNumber?: IntFilter<"SecurityDetails"> | number
     resetAttemptNumber?: IntFilter<"SecurityDetails"> | number
     lastResetAttemptTime?: DateTimeFilter<"SecurityDetails"> | Date | string
     failedLoginAttemptNumber?: IntFilter<"SecurityDetails"> | number
@@ -8898,6 +8920,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     otpToken?: SortOrderInput | SortOrder
+    emailVerifyAttemptNumber?: SortOrder
     resetAttemptNumber?: SortOrder
     lastResetAttemptTime?: SortOrder
     failedLoginAttemptNumber?: SortOrder
@@ -8919,6 +8942,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"SecurityDetails"> | string
     userId?: StringWithAggregatesFilter<"SecurityDetails"> | string
     otpToken?: StringNullableWithAggregatesFilter<"SecurityDetails"> | string | null
+    emailVerifyAttemptNumber?: IntWithAggregatesFilter<"SecurityDetails"> | number
     resetAttemptNumber?: IntWithAggregatesFilter<"SecurityDetails"> | number
     lastResetAttemptTime?: DateTimeWithAggregatesFilter<"SecurityDetails"> | Date | string
     failedLoginAttemptNumber?: IntWithAggregatesFilter<"SecurityDetails"> | number
@@ -9397,6 +9421,7 @@ export namespace Prisma {
   export type SecurityDetailsCreateInput = {
     id?: string
     otpToken?: string | null
+    emailVerifyAttemptNumber?: number
     resetAttemptNumber?: number
     lastResetAttemptTime?: Date | string
     failedLoginAttemptNumber?: number
@@ -9412,6 +9437,7 @@ export namespace Prisma {
     id?: string
     userId: string
     otpToken?: string | null
+    emailVerifyAttemptNumber?: number
     resetAttemptNumber?: number
     lastResetAttemptTime?: Date | string
     failedLoginAttemptNumber?: number
@@ -9425,6 +9451,7 @@ export namespace Prisma {
   export type SecurityDetailsUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     otpToken?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerifyAttemptNumber?: IntFieldUpdateOperationsInput | number
     resetAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
@@ -9440,6 +9467,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     otpToken?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerifyAttemptNumber?: IntFieldUpdateOperationsInput | number
     resetAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
@@ -9454,6 +9482,7 @@ export namespace Prisma {
     id?: string
     userId: string
     otpToken?: string | null
+    emailVerifyAttemptNumber?: number
     resetAttemptNumber?: number
     lastResetAttemptTime?: Date | string
     failedLoginAttemptNumber?: number
@@ -9466,6 +9495,7 @@ export namespace Prisma {
   export type SecurityDetailsUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     otpToken?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerifyAttemptNumber?: IntFieldUpdateOperationsInput | number
     resetAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
@@ -9479,6 +9509,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     otpToken?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerifyAttemptNumber?: IntFieldUpdateOperationsInput | number
     resetAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
@@ -10105,6 +10136,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     otpToken?: SortOrder
+    emailVerifyAttemptNumber?: SortOrder
     resetAttemptNumber?: SortOrder
     lastResetAttemptTime?: SortOrder
     failedLoginAttemptNumber?: SortOrder
@@ -10115,6 +10147,7 @@ export namespace Prisma {
   }
 
   export type SecurityDetailsAvgOrderByAggregateInput = {
+    emailVerifyAttemptNumber?: SortOrder
     resetAttemptNumber?: SortOrder
     failedLoginAttemptNumber?: SortOrder
   }
@@ -10123,6 +10156,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     otpToken?: SortOrder
+    emailVerifyAttemptNumber?: SortOrder
     resetAttemptNumber?: SortOrder
     lastResetAttemptTime?: SortOrder
     failedLoginAttemptNumber?: SortOrder
@@ -10136,6 +10170,7 @@ export namespace Prisma {
     id?: SortOrder
     userId?: SortOrder
     otpToken?: SortOrder
+    emailVerifyAttemptNumber?: SortOrder
     resetAttemptNumber?: SortOrder
     lastResetAttemptTime?: SortOrder
     failedLoginAttemptNumber?: SortOrder
@@ -10146,6 +10181,7 @@ export namespace Prisma {
   }
 
   export type SecurityDetailsSumOrderByAggregateInput = {
+    emailVerifyAttemptNumber?: SortOrder
     resetAttemptNumber?: SortOrder
     failedLoginAttemptNumber?: SortOrder
   }
@@ -10986,6 +11022,7 @@ export namespace Prisma {
   export type SecurityDetailsCreateWithoutUserInput = {
     id?: string
     otpToken?: string | null
+    emailVerifyAttemptNumber?: number
     resetAttemptNumber?: number
     lastResetAttemptTime?: Date | string
     failedLoginAttemptNumber?: number
@@ -10999,6 +11036,7 @@ export namespace Prisma {
   export type SecurityDetailsUncheckedCreateWithoutUserInput = {
     id?: string
     otpToken?: string | null
+    emailVerifyAttemptNumber?: number
     resetAttemptNumber?: number
     lastResetAttemptTime?: Date | string
     failedLoginAttemptNumber?: number
@@ -11129,6 +11167,7 @@ export namespace Prisma {
   export type SecurityDetailsUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     otpToken?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerifyAttemptNumber?: IntFieldUpdateOperationsInput | number
     resetAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
@@ -11142,6 +11181,7 @@ export namespace Prisma {
   export type SecurityDetailsUncheckedUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     otpToken?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerifyAttemptNumber?: IntFieldUpdateOperationsInput | number
     resetAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
@@ -11462,6 +11502,7 @@ export namespace Prisma {
   export type SecurityDetailsCreateWithoutDeviceInput = {
     id?: string
     otpToken?: string | null
+    emailVerifyAttemptNumber?: number
     resetAttemptNumber?: number
     lastResetAttemptTime?: Date | string
     failedLoginAttemptNumber?: number
@@ -11476,6 +11517,7 @@ export namespace Prisma {
     id?: string
     userId: string
     otpToken?: string | null
+    emailVerifyAttemptNumber?: number
     resetAttemptNumber?: number
     lastResetAttemptTime?: Date | string
     failedLoginAttemptNumber?: number
@@ -11504,6 +11546,7 @@ export namespace Prisma {
   export type SecurityDetailsUpdateWithoutDeviceInput = {
     id?: StringFieldUpdateOperationsInput | string
     otpToken?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerifyAttemptNumber?: IntFieldUpdateOperationsInput | number
     resetAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number
@@ -11518,6 +11561,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     otpToken?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerifyAttemptNumber?: IntFieldUpdateOperationsInput | number
     resetAttemptNumber?: IntFieldUpdateOperationsInput | number
     lastResetAttemptTime?: DateTimeFieldUpdateOperationsInput | Date | string
     failedLoginAttemptNumber?: IntFieldUpdateOperationsInput | number

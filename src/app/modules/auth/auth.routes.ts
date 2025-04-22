@@ -31,4 +31,17 @@ authRoutes.post(
   authController.resetPassword
 );
 
+authRoutes.post(
+  "/send-verification-email",
+  auth(UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT, UserRole.SUPER_ADMIN),
+  authController.sendVerificationEmail
+);
+
+authRoutes.post(
+  "/verify-email",
+  auth(UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT, UserRole.SUPER_ADMIN),
+  validateRequest(validateAuth.verifyEmail),
+  authController.verifyEmail
+);
+
 export default authRoutes;

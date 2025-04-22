@@ -9,6 +9,7 @@ export default {
   db_url: process.env.DATABASE_URL!,
 
   client_url: process.env.CLIENT_URL!,
+  server_url: process.env.SERVER_URL!,
 
   jwt: {
     bcrypt_salt_rounds: process.env.BCRYPT_SALT_ROUNDS!,
@@ -20,6 +21,8 @@ export default {
     jwt_otp_expire_in: process.env.JWT_OTP_EXPIRES_IN!,
     jwt_pass_reset_secret: process.env.JWT_PASS_RESET_SECRET!,
     jwt_pass_reset_expires_in: process.env.JWT_PASS_RESET_EXPIRES_IN!,
+    jwt_email_verify_secret: process.env.JWT_EMAIL_VERIFY_SECRET!,
+    jwt_email_verify_expires_in: process.env.JWT_EMAIL_VERIFY_EXPIRES_IN!,
   },
 
   sender_email: process.env.SENDER_EMAIL!,
@@ -28,10 +31,13 @@ export default {
   allowed: {
     reset_attempts: process.env.ALLOWED_RESET_ATTEMPT_NUMBER!,
     failed_attempts: process.env.ALLOWED_FAILED_ATTEMPT_NUMBER!,
+    verify_eamil_attempts: process.env.ALLOWED_EMAIL_VERIFY_ATTEMPT_NUMBER!,
     suspend_time_failed_attempt:
       process.env.SUSPEND_MINUTES_FOR_FAILED_ATTEMPT!,
     suspend_time_failed_reset_attempt:
       process.env.SUSPEND_MINUTES_FOR_FAILED_RESET_ATTEMPT!,
+    suspend_time_failed_verify_email_attempt:
+      process.env.SUSPEND_MINUTES_FOR__FAILED_VERIFY_EMAIL_ATTEMPT!,
   },
 
   cloudinary: {

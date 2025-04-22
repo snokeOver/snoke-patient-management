@@ -143,6 +143,7 @@ exports.Prisma.SecurityDetailsScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   otpToken: 'otpToken',
+  emailVerifyAttemptNumber: 'emailVerifyAttemptNumber',
   resetAttemptNumber: 'resetAttemptNumber',
   lastResetAttemptTime: 'lastResetAttemptTime',
   failedLoginAttemptNumber: 'failedLoginAttemptNumber',
@@ -224,6 +225,7 @@ exports.UserRole = exports.$Enums.UserRole = {
 };
 
 exports.UserStatus = exports.$Enums.UserStatus = {
+  DEACTIVE: 'DEACTIVE',
   ACTIVE: 'ACTIVE',
   BLOCKED: 'BLOCKED',
   SUSPENDED: 'SUSPENDED',

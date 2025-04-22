@@ -31,7 +31,9 @@ const auth = (...requiredRoles: UserRole[]) => {
         const user = await prisma.user.findUnique({
           where: {
             email,
-            status: UserStatus.ACTIVE,
+            status: {
+              in: [UserStatus.ACTIVE, UserStatus.DEACTIVE],
+            },
           },
         });
 

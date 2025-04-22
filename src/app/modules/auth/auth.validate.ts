@@ -1,5 +1,6 @@
+import { verify } from "crypto";
 import { z } from "zod";
-
+//verify otp
 const verifyOtp = z.object({
   body: z
     .object({
@@ -9,6 +10,17 @@ const verifyOtp = z.object({
     .strict(),
 });
 
+//vefiry email
+const verifyEmail = z.object({
+  body: z
+    .object({
+      email: z.string().email(),
+      token: z.string(),
+    })
+    .strict(),
+});
+
+//Reset password
 const resetPassword = z.object({
   body: z
     .object({
@@ -20,4 +32,5 @@ const resetPassword = z.object({
 export const validateAuth = {
   verifyOtp,
   resetPassword,
+  verifyEmail,
 };

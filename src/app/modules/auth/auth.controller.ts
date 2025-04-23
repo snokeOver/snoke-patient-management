@@ -1,4 +1,3 @@
-import { access } from "fs";
 import config from "../../config";
 import { sendResponse } from "../../utils/sendResponse";
 import { tryCatchAsync } from "../../utils/tryCatchAsync";

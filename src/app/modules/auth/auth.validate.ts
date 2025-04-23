@@ -1,4 +1,3 @@
-import { verify } from "crypto";
 import { z } from "zod";
 //verify otp
 const verifyOtp = z.object({

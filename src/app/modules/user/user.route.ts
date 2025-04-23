@@ -15,6 +15,11 @@ userRotes.get(
   auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
   userController.getAllUser
 );
+userRotes.get(
+  "/my-profile",
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+  userController.getMyProfile
+);
 
 userRotes.patch(
   "/status/:id",

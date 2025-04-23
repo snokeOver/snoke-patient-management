@@ -5,6 +5,8 @@ import { tryCatchAsync } from "../../utils/tryCatchAsync";
 import { pick } from "../../utils/pick";
 import { validSearchableFields } from "./user.constant";
 import { paginationProperties } from "../../constant/pagination";
+import { Request } from "express";
+import { JwtPayload } from "jsonwebtoken";
 
 //Create admin
 const createAdmin = tryCatchAsync(async (req, res) => {
@@ -97,10 +99,28 @@ const updateUserStatus = tryCatchAsync(async (req, res) => {
   });
 });
 
+//Get my profile
+const getMyProfile = tryCatchAsync(
+  async (req: Request & { user?: JwtPayload }, res) => {
+    const result = await userService.getMyProfile(req.user);
+
+    sendResponse({
+      res,
+      sendData: {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "User Profile fetched successfully",
+        data: result,
+      },
+    });
+  }
+);
+
 export const userController = {
   createAdmin,
   createDoctor,
   createPatient,
   getAllUser,
   updateUserStatus,
+  getMyProfile,
 };

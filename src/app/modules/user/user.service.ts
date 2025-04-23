@@ -5,6 +5,7 @@ import {
   Prisma,
   User,
   UserRole,
+  UserStatus,
 } from "../../../../generated/prisma";
 
 import bcrypt from "bcrypt";
@@ -24,6 +25,7 @@ import { IClientInfo, IFile, IPagination } from "../../types";
 import { fileUploader } from "../../utils/fileUploader";
 import { paginationHelper } from "../../utils/paginationHealper";
 import { userSearchableFields } from "./user.constant";
+import { JwtPayload } from "jsonwebtoken";
 
 //Create admin
 const createAdmin = async (
@@ -321,10 +323,44 @@ const updateUserStatus = async (
   return result;
 };
 
+//Get my profile
+const getMyProfile = async (user: JwtPayload | undefined) => {
+  if (!user) throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized");
+
+  const userRole =
+    user.role === UserRole.ADMIN
+      ? "admin"
+      : user.role === UserRole.DOCTOR
+      ? "doctor"
+      : user.role === UserRole.PATIENT
+      ? "patient"
+      : "";
+
+  if (!userRole)
+    throw new AppError(httpStatus.NOT_FOUND, "User role not found");
+
+  const foundUser = await prisma.user.findUnique({
+    where: {
+      email: user.email,
+    },
+
+    select: {
+      admin: userRole === "admin" ? true : false,
+      doctor: userRole === "doctor" ? true : false,
+      patient: userRole === "patient" ? true : false,
+    },
+  });
+
+  if (!foundUser) throw new AppError(httpStatus.NOT_FOUND, "User not found");
+
+  return foundUser[userRole];
+};
+
 export const userService = {
   createAdmin,
   createDoctor,
   createPatient,
   getAllUsers,
   updateUserStatus,
+  getMyProfile,
 };

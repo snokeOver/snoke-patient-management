@@ -8,6 +8,7 @@ import handleZodError from "./handleZodError";
 import { TErrorSources } from "../../types";
 import AppError from "./appError";
 import handlePrismaError from "./handlePrismaError";
+import { fileUploader } from "../../utils/fileUploader";
 
 export const globalErrorHandler: ErrorRequestHandler = (
   err,
@@ -63,6 +64,8 @@ export const globalErrorHandler: ErrorRequestHandler = (
     error: err,
     stack: config.NODE_ENV === "development" ? err?.stack : null,
   });
+
+  if (req.file) fileUploader.deleteOriginalFile(req.file.path);
 
   // Do not return anything (ensure this handler does not return a value)
   return;

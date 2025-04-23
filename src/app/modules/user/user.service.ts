@@ -355,6 +355,60 @@ const getMyProfile = async (user: JwtPayload | undefined) => {
 
   return foundUser[userRole];
 };
+//update my profile
+const updateMyProfile = async (
+  user: JwtPayload | undefined,
+  payload: any,
+  file: IFile | undefined
+) => {
+  if (!user) throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized");
+
+  const userRole =
+    user.role === UserRole.ADMIN
+      ? "admin"
+      : user.role === UserRole.DOCTOR
+      ? "doctor"
+      : user.role === UserRole.PATIENT
+      ? "patient"
+      : "";
+
+  if (!userRole)
+    throw new AppError(httpStatus.NOT_FOUND, "User role not found");
+
+  //Upload image to cloudinary
+  if (file) {
+    const uploadedResult = await fileUploader.cloudinaryUpload(
+      file.path,
+      file.filename.split(".")[0]
+    );
+    payload.profilePhoto = uploadedResult.secure_url;
+  }
+
+  let updatedRoleData;
+  if (userRole === "admin") {
+    updatedRoleData = await prisma.admin.update({
+      where: { email: user.email },
+      data: payload, // Assuming payload contains the admin fields to be updated
+    });
+  } else if (userRole === "doctor") {
+    updatedRoleData = await prisma.doctor.update({
+      where: { email: user.email },
+      data: payload, // Assuming payload contains the doctor fields to be updated
+    });
+  } else if (userRole === "patient") {
+    updatedRoleData = await prisma.patient.update({
+      where: { email: user.email },
+      data: payload, // Assuming payload contains the patient fields to be updated
+    });
+  } else {
+    throw new AppError(httpStatus.NOT_FOUND, "Role not recognized");
+  }
+
+  if (!updatedRoleData)
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+
+  return updatedRoleData;
+};
 
 export const userService = {
   createAdmin,
@@ -363,4 +417,5 @@ export const userService = {
   getAllUsers,
   updateUserStatus,
   getMyProfile,
+  updateMyProfile,
 };

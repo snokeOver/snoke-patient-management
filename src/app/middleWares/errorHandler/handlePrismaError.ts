@@ -9,11 +9,18 @@ const handlePrismaError = (
   let errorSources: TErrorSources = [];
 
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
-    // Handle known Prisma error codes (e.g., unique constraint, foreign key constraint)
-    errorSources.push({
-      path: "",
-      message: err.message,
-    });
+    if (err.code === "P2002") {
+      errorSources.push({
+        path: "",
+        message: "Duplicate data found",
+      });
+    } else {
+      // Handle known Prisma error codes (e.g., unique constraint, foreign key constraint)
+      errorSources.push({
+        path: "",
+        message: err.message,
+      });
+    }
   }
 
   if (err instanceof Prisma.PrismaClientValidationError) {

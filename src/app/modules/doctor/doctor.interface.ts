@@ -11,6 +11,7 @@ export interface IDoctorFilteredQuery {
   email?: string | undefined;
   contactNumber?: string | undefined;
   searchTerm?: string | undefined;
+  speciality?: string | undefined;
 }
 
 export interface IDeletedDoctor {

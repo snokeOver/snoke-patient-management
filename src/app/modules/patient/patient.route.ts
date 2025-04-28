@@ -15,6 +15,12 @@ patientRoutes.patch(
   PatientController.updatePatient
 );
 
+patientRoutes.delete(
+  "/:id",
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  PatientController.deletePatient
+);
+
 patientRoutes.get(
   "/:id",
   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),

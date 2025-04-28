@@ -1,16 +1,5 @@
-import config from "../../config";
-import AppError from "../../middleWares/errorHandler/appError";
 import { prisma } from "../../utils/prisma";
-
-import bcrypt from "bcrypt";
-import httpStatus from "http-status";
-
-import { JwtPayload, Secret, TokenExpiredError } from "jsonwebtoken";
-import { UserStatus } from "../../../../generated/prisma";
-import { IClientInfo, IFile, IJwtPayload } from "../../types";
-import { createOtpToken, createToken, verifyToken } from "../../utils/jwtToken";
-import { generateLink, generateOtp } from "../../utils/generator";
-import { emailSender } from "../../utils/emailSender";
+import { IFile } from "../../types";
 import { fileUploader } from "../../utils/fileUploader";
 
 //Create specialities

@@ -56,8 +56,23 @@ const getAllPatient = tryCatchAsync(async (req, res) => {
   });
 });
 
+const deletePatient = tryCatchAsync(async (req, res) => {
+  const result = await PatientService.deletePatient(req.params.id);
+
+  sendResponse({
+    res,
+    sendData: {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Patient deleted successfully",
+      data: result,
+    },
+  });
+});
+
 export const PatientController = {
   getAPatient,
   getAllPatient,
   updatePatient,
+  deletePatient,
 };

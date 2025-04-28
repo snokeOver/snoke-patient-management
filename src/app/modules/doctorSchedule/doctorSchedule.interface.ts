@@ -1,0 +1,3 @@
+interface ICreateDoctorSchedulePayload {
+  scheduleIds: string[];
+}

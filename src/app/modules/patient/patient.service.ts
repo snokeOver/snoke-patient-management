@@ -1,4 +1,4 @@
-import { Patient, Prisma } from "../../../../generated/prisma";
+import { Patient, Prisma, UserStatus } from "../../../../generated/prisma";
 import AppError from "../../middleWares/errorHandler/appError";
 import { IPagination } from "../../types";
 import { paginationHelper } from "../../utils/paginationHealper";
@@ -161,8 +161,36 @@ const getAllPatient = async (
   };
 };
 
+//Delete single patient
+const deletePatient = async (id: string): Promise<Patient> => {
+  const result = await prisma.$transaction(async (tx) => {
+    const deletedPatient = await tx.patient.update({
+      where: {
+        id,
+      },
+      data: {
+        isDeleted: true,
+      },
+    });
+
+    const deletedUser = await tx.user.update({
+      where: {
+        email: deletedPatient.email,
+      },
+      data: {
+        status: UserStatus.DELETED,
+      },
+    });
+
+    return deletedPatient;
+  });
+
+  return result;
+};
+
 export const PatientService = {
   getSinglePatient,
   getAllPatient,
   updateSinglePatient,
+  deletePatient,
 };

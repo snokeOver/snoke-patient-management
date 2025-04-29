@@ -15,10 +15,13 @@ router.post(
   validateRequest(validateDoctorSchedule.create),
   doctorScheduleController.create
 );
-router.get(
-  "/",
-  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR),
-  doctorScheduleController.getAll
+
+router.get("/", auth(UserRole.DOCTOR), doctorScheduleController.getAll);
+
+router.delete(
+  "/:id",
+  auth(UserRole.DOCTOR),
+  doctorScheduleController.deleteDocSchedule
 );
 
 export const doctorScheduleRoutes = router;
